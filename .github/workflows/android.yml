@@ -38,7 +38,9 @@ jobs:
       - name: Build with Gradle
         run: |
           cd android
-          ./gradlew assembleDebug --stacktrace || gradle assembleDebug --stacktrace
+          # If wrapper is corrupt, delete it and use system gradle
+          rm -f gradle/wrapper/gradle-wrapper.jar
+          gradle assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

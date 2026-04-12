@@ -1,0 +1,5 @@
+{
+  "name": "Remix: BillBook Pro",
+  "description": "A professional offline bill book and note pass application for managing customers and generating PDF invoices.",
+  "requestFramePermissions": []
+}

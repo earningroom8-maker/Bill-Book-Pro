@@ -1,0 +1,161 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: bills
+    // Document ID: {billId}
+    // Fields: id, billNumber, date, customer, items, subtotal, tax, total, receivedAmount, balanceDue, status, notes, companyName, uid
+    //
+    // Collection: quotations
+    // Document ID: {quotationId}
+    // Fields: id, billNumber, date, customer, items, subtotal, tax, total, receivedAmount, balanceDue, status, notes, companyName, uid
+    //
+    // Collection: notes
+    // Document ID: {noteId}
+    // Fields: id, customerName, phoneNumber, content, date, uid
+    //
+    // Collection: materialLists
+    // Document ID: {listId}
+    // Fields: id, title, customerName, date, items, total, uid
+    //
+    // Collection: teamMembers
+    // Document ID: {memberId}
+    // Fields: id, name, phone, joinedDate, uid
+    //
+    // Collection: attendance
+    // Document ID: {attendanceId}
+    // Fields: id, memberId, date, status, checkIn, checkOut, uid
+    //
+    // Collection: settings
+    // Document ID: {uid}
+    // Fields: companyName, ownerName, phone, email, address, gstNumber, country, currency, showGST, showEmail, darkMode, uid
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.uid;
+    }
+
+    function uidUnchanged() {
+      return !('uid' in request.resource.data) || request.resource.data.uid == request.auth.uid;
+    }
+
+    function uidNotModified() {
+      return !('uid' in request.resource.data) || request.resource.data.uid == resource.data.uid;
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function isValidString(field, maxLen) {
+      return request.resource.data[field] is string && request.resource.data[field].size() <= maxLen;
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidBill(data) {
+      return data.id is string &&
+             data.billNumber is string &&
+             data.total is number &&
+             data.uid == request.auth.uid;
+    }
+
+    function isValidNote(data) {
+      return data.id is string &&
+             data.content is string &&
+             data.uid == request.auth.uid;
+    }
+
+    function isValidMaterialList(data) {
+      return data.id is string &&
+             data.title is string &&
+             data.uid == request.auth.uid;
+    }
+
+    function isValidTeamMember(data) {
+      return data.id is string &&
+             data.name is string &&
+             data.uid == request.auth.uid;
+    }
+
+    function isValidAttendance(data) {
+      return data.id is string &&
+             data.memberId is string &&
+             data.uid == request.auth.uid;
+    }
+
+    function isValidSettings(data) {
+      return data.uid == request.auth.uid;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /bills/{billId} {
+      allow read: if isDocOwner();
+      allow create: if isAuthenticated() && isValidBill(request.resource.data) && uidUnchanged();
+      allow update: if isDocOwner() && isValidBill(request.resource.data) && uidNotModified();
+      allow delete: if isDocOwner();
+    }
+
+    match /quotations/{quotationId} {
+      allow read: if isDocOwner();
+      allow create: if isAuthenticated() && isValidBill(request.resource.data) && uidUnchanged();
+      allow update: if isDocOwner() && isValidBill(request.resource.data) && uidNotModified();
+      allow delete: if isDocOwner();
+    }
+
+    match /notes/{noteId} {
+      allow read: if isDocOwner();
+      allow create: if isAuthenticated() && isValidNote(request.resource.data) && uidUnchanged();
+      allow update: if isDocOwner() && isValidNote(request.resource.data) && uidNotModified();
+      allow delete: if isDocOwner();
+    }
+
+    match /materialLists/{listId} {
+      allow read: if isDocOwner();
+      allow create: if isAuthenticated() && isValidMaterialList(request.resource.data) && uidUnchanged();
+      allow update: if isDocOwner() && isValidMaterialList(request.resource.data) && uidNotModified();
+      allow delete: if isDocOwner();
+    }
+
+    match /teamMembers/{memberId} {
+      allow read: if isDocOwner();
+      allow create: if isAuthenticated() && isValidTeamMember(request.resource.data) && uidUnchanged();
+      allow update: if isDocOwner() && isValidTeamMember(request.resource.data) && uidNotModified();
+      allow delete: if isDocOwner();
+    }
+
+    match /attendance/{attendanceId} {
+      allow read: if isDocOwner();
+      allow create: if isAuthenticated() && isValidAttendance(request.resource.data) && uidUnchanged();
+      allow update: if isDocOwner() && isValidAttendance(request.resource.data) && uidNotModified();
+      allow delete: if isDocOwner();
+    }
+
+    match /settings/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid) && isValidSettings(request.resource.data);
+      allow update: if isOwner(uid) && isValidSettings(request.resource.data);
+      allow delete: if isOwner(uid);
+    }
+  }
+}

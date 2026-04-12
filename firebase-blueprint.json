@@ -1,0 +1,165 @@
+{
+  "entities": {
+    "Bill": {
+      "title": "Bill",
+      "description": "A bill or quotation document",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "billNumber": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "customer": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "mobile": { "type": "string" },
+            "address": { "type": "string" }
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "quantity": { "type": "number" },
+              "price": { "type": "number" },
+              "total": { "type": "number" }
+            }
+          }
+        },
+        "subtotal": { "type": "number" },
+        "tax": { "type": "number" },
+        "total": { "type": "number" },
+        "receivedAmount": { "type": "number" },
+        "balanceDue": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "paid"] },
+        "notes": { "type": "string" },
+        "companyName": { "type": "string" },
+        "uid": { "type": "string", "description": "Owner UID" }
+      },
+      "required": ["id", "billNumber", "date", "customer", "items", "total", "uid"]
+    },
+    "Note": {
+      "title": "Note",
+      "description": "A simple note",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerName": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "content": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "uid": { "type": "string" }
+      },
+      "required": ["id", "content", "date", "uid"]
+    },
+    "MaterialList": {
+      "title": "Material List",
+      "description": "A list of materials for a project",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "customerName": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "quantity": { "type": "number" },
+              "unit": { "type": "string" },
+              "price": { "type": "number" },
+              "total": { "type": "number" }
+            }
+          }
+        },
+        "total": { "type": "number" },
+        "uid": { "type": "string" }
+      },
+      "required": ["id", "title", "date", "items", "uid"]
+    },
+    "TeamMember": {
+      "title": "Team Member",
+      "description": "A member of the team",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "joinedDate": { "type": "string", "format": "date-time" },
+        "uid": { "type": "string" }
+      },
+      "required": ["id", "name", "uid"]
+    },
+    "Attendance": {
+      "title": "Attendance",
+      "description": "Attendance record for a team member",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "memberId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "status": { "type": "string", "enum": ["present", "absent"] },
+        "checkIn": { "type": "string" },
+        "checkOut": { "type": "string" },
+        "uid": { "type": "string" }
+      },
+      "required": ["id", "memberId", "date", "status", "uid"]
+    },
+    "AppSettings": {
+      "title": "App Settings",
+      "description": "User specific application settings",
+      "type": "object",
+      "properties": {
+        "companyName": { "type": "string" },
+        "ownerName": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "address": { "type": "string" },
+        "gstNumber": { "type": "string" },
+        "country": { "type": "string" },
+        "currency": { "type": "string" },
+        "showGST": { "type": "boolean" },
+        "showEmail": { "type": "boolean" },
+        "darkMode": { "type": "boolean" },
+        "uid": { "type": "string" }
+      },
+      "required": ["uid"]
+    }
+  },
+  "firestore": {
+    "/bills/{billId}": {
+      "schema": "Bill",
+      "description": "Collection of bills"
+    },
+    "/quotations/{quotationId}": {
+      "schema": "Bill",
+      "description": "Collection of quotations"
+    },
+    "/notes/{noteId}": {
+      "schema": "Note",
+      "description": "Collection of notes"
+    },
+    "/materialLists/{listId}": {
+      "schema": "MaterialList",
+      "description": "Collection of material lists"
+    },
+    "/teamMembers/{memberId}": {
+      "schema": "TeamMember",
+      "description": "Collection of team members"
+    },
+    "/attendance/{attendanceId}": {
+      "schema": "Attendance",
+      "description": "Collection of attendance records"
+    },
+    "/settings/{uid}": {
+      "schema": "AppSettings",
+      "description": "User settings document"
+    }
+  }
+}

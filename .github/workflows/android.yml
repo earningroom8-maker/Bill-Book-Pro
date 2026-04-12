@@ -34,12 +34,12 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.2.1
 
       - name: Build with Gradle
         run: |
           cd android
-          # If wrapper is corrupt, delete it and use system gradle
-          rm -f gradle/wrapper/gradle-wrapper.jar
           gradle assembleDebug --stacktrace
 
       - name: Upload APK

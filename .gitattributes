@@ -1,0 +1,19 @@
+# Handle binary files correctly to prevent corruption during transfer
+*.jar binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.tar binary
+*.class binary
+*.aar binary
+*.apk binary
+
+# Ensure shell scripts use LF line endings
+*.sh text eol=lf
+gradlew text eol=lf

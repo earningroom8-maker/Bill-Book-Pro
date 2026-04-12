@@ -22,17 +22,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+}
 
-    // Fix for checkDebugAarMetadata failure with Cordova plugins
-    androidComponents {
-        onVariants(selector().all()) { variant ->
-            afterEvaluate {
-                def taskName = "check${variant.name.capitalize()}AarMetadata"
-                if (tasks.findByName(taskName)) {
-                    tasks.getByName(taskName).enabled = false
-                }
-            }
-        }
+// Fix for checkDebugAarMetadata failure with Cordova plugins
+tasks.whenTaskAdded { task ->
+    if (task.name.startsWith("check") && task.name.endsWith("AarMetadata")) {
+        task.enabled = false
     }
 }
 

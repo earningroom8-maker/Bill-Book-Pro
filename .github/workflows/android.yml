@@ -45,7 +45,7 @@ jobs:
           cd android
           # Bypassing corrupt wrapper jar by using system gradle and removing the corrupt file
           rm -f gradle/wrapper/gradle-wrapper.jar
-          gradle assembleDebug --stacktrace --info --no-daemon
+          gradle clean assembleDebug --stacktrace --info --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

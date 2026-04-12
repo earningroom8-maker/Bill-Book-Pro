@@ -23,6 +23,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { getBills, getSettings, getNotes, setupSync } from "./lib/storage";
 import { auth, onAuthStateChanged, User } from "./lib/firebase";
+import { App as CapApp } from "@capacitor/app";
 
 export default function App() {
   const [activeBill, setActiveBill] = React.useState<Bill | null>(null);
@@ -36,6 +37,7 @@ export default function App() {
     paidBills: 0,
     contacts: 0
   });
+  const [settings, setSettings] = React.useState(getSettings());
 
   const calculateStats = () => {
     const bills = getBills();
@@ -58,6 +60,19 @@ export default function App() {
     let syncUnsubscribe: (() => void) | null = null;
 
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      const isOffline = localStorage.getItem("billbook_offline_mode") === "true";
+      
+      if (isOffline) {
+        setUser({
+          uid: "offline-user",
+          displayName: "Offline User",
+          email: "offline@billbook.pro",
+          isOffline: true
+        } as any);
+        setIsAuthReady(true);
+        return;
+      }
+
       setUser(currentUser);
       setIsAuthReady(true);
       
@@ -78,13 +93,26 @@ export default function App() {
 
     calculateStats();
     
-    const handleStorageChange = () => calculateStats();
+    const handleStorageChange = () => {
+      calculateStats();
+      setSettings(getSettings());
+    };
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('bill-updated', handleStorageChange);
     window.addEventListener('note-updated', handleStorageChange);
     
+    // Handle Android Back Button
+    const backButtonListener = CapApp.addListener('backButton', ({ canGoBack }) => {
+      if (view !== "dashboard") {
+        setView("dashboard");
+      } else {
+        CapApp.exitApp();
+      }
+    });
+    
     return () => {
       unsubscribe();
+      backButtonListener.then(l => l.remove());
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('bill-updated', handleStorageChange);
       window.removeEventListener('note-updated', handleStorageChange);
@@ -144,7 +172,18 @@ export default function App() {
                     <Receipt className="text-white w-6 h-6" />
                   </div>
                   <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-                    BillBook<span className="text-blue-600">Pro</span>
+                    {settings.companyName ? (
+                      <>
+                        {settings.companyName.split(' ')[0]}
+                        <span className="text-blue-600">
+                          {settings.companyName.split(' ').slice(1).join(' ')}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        BillBook<span className="text-blue-600">Pro</span>
+                      </>
+                    )}
                   </h1>
                 </>
               ) : (
@@ -201,45 +240,45 @@ export default function App() {
                 className="space-y-8"
               >
                 {/* Main Action Buttons */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4">
                   <button
                     onClick={() => setView("bill")}
-                    className="group relative bg-white dark:bg-slate-900/80 p-5 rounded-3xl shadow-sm border border-slate-200/60 dark:border-slate-800 flex items-center gap-4 transition-all hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-900 hover:-translate-y-1"
+                    className="group relative bg-white dark:bg-slate-900/80 p-3 sm:p-5 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200/60 dark:border-slate-800 flex items-center gap-2 sm:gap-4 transition-all hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-900 hover:-translate-y-1"
                   >
-                    <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                      <Receipt className="w-6 h-6" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                      <Receipt className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
-                    <h2 className="text-xl font-black text-blue-600 dark:text-blue-400">Bill</h2>
+                    <h2 className="text-sm sm:text-xl font-black text-blue-600 dark:text-blue-400 truncate">Bill</h2>
                   </button>
 
                   <button
                     onClick={() => setView("note")}
-                    className="group relative bg-white dark:bg-slate-900/80 p-5 rounded-3xl shadow-sm border border-slate-200/60 dark:border-slate-800 flex items-center gap-4 transition-all hover:shadow-lg hover:border-amber-200 dark:hover:border-amber-900 hover:-translate-y-1"
+                    className="group relative bg-white dark:bg-slate-900/80 p-3 sm:p-5 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200/60 dark:border-slate-800 flex items-center gap-2 sm:gap-4 transition-all hover:shadow-lg hover:border-amber-200 dark:hover:border-amber-900 hover:-translate-y-1"
                   >
-                    <div className="w-12 h-12 bg-amber-50 dark:bg-amber-900/20 rounded-xl flex items-center justify-center text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-colors">
-                      <StickyNote className="w-6 h-6" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-50 dark:bg-amber-900/20 rounded-xl flex items-center justify-center text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                      <StickyNote className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
-                    <h2 className="text-xl font-black text-amber-600 dark:text-amber-400">Note</h2>
+                    <h2 className="text-sm sm:text-xl font-black text-amber-600 dark:text-amber-400 truncate">Note</h2>
                   </button>
 
                   <button
                     onClick={() => setView("quotation")}
-                    className="group relative bg-white dark:bg-slate-900/80 p-5 rounded-3xl shadow-sm border border-slate-200/60 dark:border-slate-800 flex items-center gap-4 transition-all hover:shadow-lg hover:border-purple-200 dark:hover:border-purple-900 hover:-translate-y-1"
+                    className="group relative bg-white dark:bg-slate-900/80 p-3 sm:p-5 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200/60 dark:border-slate-800 flex items-center gap-2 sm:gap-4 transition-all hover:shadow-lg hover:border-purple-200 dark:hover:border-purple-900 hover:-translate-y-1"
                   >
-                    <div className="w-12 h-12 bg-purple-50 dark:bg-purple-900/20 rounded-xl flex items-center justify-center text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                      <FileText className="w-6 h-6" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-50 dark:bg-purple-900/20 rounded-xl flex items-center justify-center text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                      <FileText className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
-                    <h2 className="text-xl font-black text-purple-600 dark:text-purple-400">Quotation</h2>
+                    <h2 className="text-sm sm:text-xl font-black text-purple-600 dark:text-purple-400 truncate">Quotation</h2>
                   </button>
 
                   <button
                     onClick={() => setView("material")}
-                    className="group relative bg-white dark:bg-slate-900/80 p-5 rounded-3xl shadow-sm border border-slate-200/60 dark:border-slate-800 flex items-center gap-4 transition-all hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-900 hover:-translate-y-1"
+                    className="group relative bg-white dark:bg-slate-900/80 p-3 sm:p-5 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200/60 dark:border-slate-800 flex items-center gap-2 sm:gap-4 transition-all hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-900 hover:-translate-y-1"
                   >
-                    <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                      <ClipboardList className="w-6 h-6" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                      <ClipboardList className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
-                    <h2 className="text-xl font-black text-emerald-600 dark:text-emerald-400">Material List</h2>
+                    <h2 className="text-sm sm:text-xl font-black text-emerald-600 dark:text-emerald-400 truncate">Material</h2>
                   </button>
                 </div>
 
@@ -334,9 +373,15 @@ export default function App() {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                <Settings onLogout={() => {
-                  auth.signOut();
+                <Settings onLogout={async () => {
+                  try {
+                    localStorage.removeItem("billbook_offline_mode");
+                    await auth.signOut();
+                  } catch (e) {
+                    console.error("Sign out error:", e);
+                  }
                   setView("dashboard");
+                  setUser(null);
                 }} />
               </motion.div>
             )}
@@ -419,7 +464,7 @@ export default function App() {
       {/* Footer - Only visible on dashboard */}
       {view === "dashboard" && (
         <footer className="relative z-10 py-6 text-center text-slate-400 text-xs border-t border-slate-200/50 bg-white/30 backdrop-blur-sm">
-          <p>© {new Date().getFullYear()} BillBook Pro. All data is stored locally on your device.</p>
+          <p>© {new Date().getFullYear()} {settings.companyName || "BillBook Pro"}. All data is stored locally on your device.</p>
         </footer>
       )}
 

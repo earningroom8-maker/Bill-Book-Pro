@@ -218,55 +218,55 @@ export function QuotationForm({ onSave }: QuotationFormProps) {
         </div>
       </div>
 
-      <Card ref={billRef} className={cn("border border-slate-200 dark:border-slate-800 shadow-sm rounded-[2rem] overflow-hidden bg-white dark:bg-slate-900 print-content", isExporting && "export-mode")}>
+      <Card ref={billRef} className={cn("border border-slate-200 dark:border-slate-800 shadow-sm rounded-2xl overflow-hidden bg-white dark:bg-slate-900 print-content", isExporting && "export-mode")}>
         <CardContent className="p-0">
           {/* Business Header */}
-          <div className="p-4 text-center space-y-1 border-b border-slate-100 dark:border-slate-800">
+          <div className="p-3 text-center space-y-0.5 border-b border-slate-100 dark:border-slate-800">
             <Input
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
-              className="text-2xl font-black tracking-wider text-purple-600 uppercase text-center border-none bg-transparent focus:ring-0 h-auto p-0 dark:text-purple-400"
+              className="text-xl font-black tracking-wider text-purple-600 uppercase text-center border-none bg-transparent focus:ring-0 h-auto p-0 dark:text-purple-400"
             />
             {settings.ownerName && (
-              <p className="text-slate-700 dark:text-slate-300 font-bold text-sm">{settings.ownerName}</p>
+              <p className="text-slate-700 dark:text-slate-300 font-bold text-xs">{settings.ownerName}</p>
             )}
-            <p className="text-slate-500 dark:text-slate-400 font-medium text-xs">{settings.address || "Gujranwala Pakistan"}</p>
-            <div className="flex items-center justify-center gap-4 text-slate-900 dark:text-white font-bold tracking-widest text-base">
+            <p className="text-slate-500 dark:text-slate-400 font-medium text-[10px]">{settings.address || "Gujranwala Pakistan"}</p>
+            <div className="flex items-center justify-center gap-3 text-slate-900 dark:text-white font-bold tracking-widest text-sm">
               <a href={`tel:${settings.phone || "03246043916"}`} className="hover:text-purple-600 transition-colors">
                 {settings.phone || "03246043916"}
               </a>
             </div>
-            <div className="pt-1">
-              <span className="bg-purple-600 text-white px-4 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase">Quotation</span>
+            <div className="pt-0.5">
+              <span className="bg-purple-600 text-white px-3 py-0.5 rounded-full text-[9px] font-black tracking-widest uppercase">Quotation</span>
             </div>
           </div>
 
           {/* Customer & Bill Info */}
           <div className="grid grid-cols-2 border-b border-slate-100 dark:border-slate-800">
-            <div className="p-4 border-r border-slate-100 dark:border-slate-800 space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">BILLED TO</Label>
+            <div className="p-3 border-r border-slate-100 dark:border-slate-800 space-y-1.5">
+              <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400">BILLED TO</Label>
               <Input
                 placeholder="Customer Name"
                 value={customer.name}
                 onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
-                className="border-slate-200 dark:border-slate-700 rounded-xl h-9 text-base font-bold focus:ring-purple-600 bg-white dark:bg-slate-800 dark:text-white"
+                className="border-slate-200 dark:border-slate-700 rounded-lg h-8 text-sm font-bold focus:ring-purple-600 bg-white dark:bg-slate-800 dark:text-white"
               />
               <Input
                 placeholder="Mobile Number"
                 type="tel"
                 value={customer.mobile}
                 onChange={(e) => setCustomer({ ...customer, mobile: e.target.value })}
-                className="border-slate-200 dark:border-slate-700 rounded-xl h-8 text-sm focus:ring-purple-600 bg-white dark:bg-slate-800 dark:text-white"
+                className="border-slate-200 dark:border-slate-700 rounded-lg h-7 text-xs focus:ring-purple-600 bg-white dark:bg-slate-800 dark:text-white"
               />
             </div>
-            <div className="p-4 space-y-3">
-              <div className="space-y-0.5">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">QUOTATION NO.</Label>
-                <p className="text-xl font-black text-purple-600 dark:text-purple-400">{quotationNumber}</p>
+            <div className="p-3 space-y-2">
+              <div className="space-y-0">
+                <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400">QUOTATION NO.</Label>
+                <p className="text-lg font-black text-purple-600 dark:text-purple-400">{quotationNumber}</p>
               </div>
-              <div className="space-y-0.5">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Date</Label>
-                <p className="text-base font-bold text-slate-900 dark:text-white">{format(new Date(), "dd MMM yyyy")}</p>
+              <div className="space-y-0">
+                <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400">Date</Label>
+                <p className="text-sm font-bold text-slate-900 dark:text-white">{format(new Date(), "dd MMM yyyy")}</p>
               </div>
             </div>
           </div>
@@ -340,10 +340,10 @@ export function QuotationForm({ onSave }: QuotationFormProps) {
           </div>
 
           {/* Summary Section */}
-          <div className="p-12 space-y-6">
+          <div className="p-6 space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-2xl font-black text-purple-600 dark:text-purple-400">Total Amount</span>
-              <span className="text-3xl font-black text-purple-600 dark:text-purple-400">
+              <span className="text-xl font-black text-purple-600 dark:text-purple-400">Total Amount</span>
+              <span className="text-2xl font-black text-purple-600 dark:text-purple-400">
                 {getCurrencySymbol(settings.currency)}
                 {total.toLocaleString()}
               </span>
@@ -351,8 +351,8 @@ export function QuotationForm({ onSave }: QuotationFormProps) {
           </div>
 
           {/* Footer */}
-          <div className="mt-12 p-8 text-center border-t border-slate-100 dark:border-slate-800">
-            <p className="text-slate-400 text-xs font-medium tracking-widest uppercase">Valid for 15 days from date of issue</p>
+          <div className="mt-6 p-6 text-center border-t border-slate-100 dark:border-slate-800">
+            <p className="text-slate-400 text-[10px] font-medium tracking-widest uppercase">Valid for 15 days from date of issue</p>
           </div>
         </CardContent>
       </Card>

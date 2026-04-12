@@ -114,18 +114,18 @@ export const deleteQuotation = async (id: string) => {
 
 export const getNextQuotationNumber = (): string => {
   const quotations = getQuotations();
-  if (quotations.length === 0) return "Q-1001";
+  if (quotations.length === 0) return "Q-001";
   const lastQuotation = quotations[0];
   const lastNumber = parseInt(lastQuotation.billNumber.replace("Q-", ""));
-  return `Q-${(lastNumber + 1).toString()}`;
+  return `Q-${(lastNumber + 1).toString().padStart(3, '0')}`;
 };
 
 export const getNextBillNumber = (): string => {
   const bills = getBills();
-  if (bills.length === 0) return "1001";
+  if (bills.length === 0) return "001";
   const lastBill = bills[0];
   const lastNumber = parseInt(lastBill.billNumber);
-  return (lastNumber + 1).toString();
+  return (lastNumber + 1).toString().padStart(3, '0');
 };
 
 export const saveNote = async (note: Note) => {
@@ -312,6 +312,7 @@ export const saveSettings = async (settings: AppSettings) => {
     }
   }
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  window.dispatchEvent(new Event('storage'));
 };
 
 // Real-time Sync Setup

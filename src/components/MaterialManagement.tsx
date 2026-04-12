@@ -208,96 +208,96 @@ export function MaterialManagement() {
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-[2rem] p-0 border-none shadow-2xl">
             <div className="bg-white dark:bg-slate-900 min-h-full">
               {/* Pad Header */}
-              <div className="p-8 border-b border-slate-100 dark:border-slate-800 text-center space-y-2">
-                <h1 className="text-3xl font-black tracking-wider text-emerald-600 uppercase">
+              <div className="p-4 border-b border-slate-100 dark:border-slate-800 text-center space-y-1">
+                <h1 className="text-xl font-black tracking-wider text-emerald-600 uppercase">
                   {settings.companyName || "F.Z ELECTRIC SERVICE'S"}
                 </h1>
-                <p className="text-slate-500 dark:text-slate-400 font-medium">{settings.address || "Gujranwala Pakistan"}</p>
-                <div className="flex items-center justify-center gap-6 text-slate-900 dark:text-white font-bold tracking-widest text-sm">
+                <p className="text-slate-500 dark:text-slate-400 font-medium text-xs">{settings.address || "Gujranwala Pakistan"}</p>
+                <div className="flex items-center justify-center gap-4 text-slate-900 dark:text-white font-bold tracking-widest text-xs">
                   <a href={`tel:${settings.phone || "03246043916"}`} className="hover:text-emerald-600 transition-colors">
                     {settings.phone || "03246043916"}
                   </a>
                 </div>
-                <div className="pt-2">
-                  <span className="bg-emerald-600 text-white px-6 py-1 rounded-full text-[10px] font-black tracking-widest uppercase">Material List</span>
+                <div className="pt-1">
+                  <span className="bg-emerald-600 text-white px-4 py-0.5 rounded-full text-[9px] font-black tracking-widest uppercase">Material List</span>
                 </div>
               </div>
 
-              <div className="p-8 space-y-8">
-                <div className="grid grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">CUSTOMER NAME</Label>
+              <div className="p-4 space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <div className="space-y-1">
+                      <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400">CUSTOMER NAME</Label>
                       <Input 
                         placeholder="e.g. John Doe" 
                         value={customerName}
                         onChange={(e) => setCustomerName(e.target.value)}
-                        className="h-10 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-lg font-bold focus:ring-emerald-600 dark:text-white"
+                        className="h-8 bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm font-bold focus:ring-emerald-600 dark:text-white"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">LIST TITLE / PROJECT</Label>
+                    <div className="space-y-1">
+                      <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400">LIST TITLE / PROJECT</Label>
                       <Input 
                         placeholder="e.g. House Wiring Materials" 
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="h-12 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-xl font-black focus:ring-emerald-600 dark:text-white"
+                        className="h-9 bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-base font-black focus:ring-emerald-600 dark:text-white"
                       />
                     </div>
                   </div>
-                  <div className="text-right space-y-1">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">DATE</Label>
-                    <p className="text-xl font-bold text-slate-900 dark:text-white">{format(new Date(), "dd MMM yyyy")}</p>
+                  <div className="text-right space-y-0.5">
+                    <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400">DATE</Label>
+                    <p className="text-sm font-bold text-slate-900 dark:text-white">{format(new Date(), "dd MMM yyyy")}</p>
                   </div>
                 </div>
 
-                <div className="border border-slate-100 dark:border-slate-800 rounded-3xl overflow-hidden">
+                <div className="border border-slate-100 dark:border-slate-800 rounded-2xl overflow-hidden">
                   <Table>
                     <TableHeader className="bg-slate-50/50 dark:bg-slate-800/50">
                       <TableRow className="hover:bg-transparent border-b border-slate-100 dark:border-slate-800">
-                        <TableHead className="text-[10px] font-black uppercase tracking-widest text-slate-400 h-12 pl-8">MATERIAL NAME</TableHead>
-                        <TableHead className="text-[10px] font-black uppercase tracking-widest text-slate-400 h-12 text-center">QTY</TableHead>
-                        <TableHead className="text-[10px] font-black uppercase tracking-widest text-slate-400 h-12 text-center">UNIT</TableHead>
-                        <TableHead className="text-[10px] font-black uppercase tracking-widest text-slate-400 h-12 text-right pr-8">ACTIONS</TableHead>
+                        <TableHead className="text-[9px] font-black uppercase tracking-widest text-slate-400 h-9 pl-4">MATERIAL NAME</TableHead>
+                        <TableHead className="text-[9px] font-black uppercase tracking-widest text-slate-400 h-9 text-center">QTY</TableHead>
+                        <TableHead className="text-[9px] font-black uppercase tracking-widest text-slate-400 h-9 text-center">UNIT</TableHead>
+                        <TableHead className="text-[9px] font-black uppercase tracking-widest text-slate-400 h-9 text-right pr-4">ACTIONS</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {items.map((item, index) => (
                         <TableRow key={item.id} className="hover:bg-slate-50/30 dark:hover:bg-slate-800/30 border-b border-slate-50 dark:border-slate-800/50">
-                          <TableCell className="pl-8 py-4">
+                          <TableCell className="pl-4 py-2">
                             <Input 
                               placeholder="Item name"
                               value={item.name}
                               onChange={(e) => updateItem(item.id, "name", e.target.value)}
-                              className="border-none bg-transparent focus:ring-0 font-bold text-slate-900 dark:text-white p-0 h-auto"
+                              className="border-none bg-transparent focus:ring-0 font-bold text-slate-900 dark:text-white p-0 h-auto text-sm"
                             />
                           </TableCell>
-                          <TableCell className="py-4">
+                          <TableCell className="py-2">
                             <Input 
                               type="number"
                               value={item.quantity || ""}
                               onChange={(e) => updateItem(item.id, "quantity", parseFloat(e.target.value) || 0)}
-                              className="w-16 mx-auto text-center border-none bg-transparent focus:ring-0 font-bold text-slate-900 dark:text-white p-0 h-auto"
+                              className="w-12 mx-auto text-center border-none bg-transparent focus:ring-0 font-bold text-slate-900 dark:text-white p-0 h-auto text-sm"
                             />
                           </TableCell>
-                          <TableCell className="py-4">
+                          <TableCell className="py-2">
                             <Input 
                               placeholder="unit"
                               value={item.unit}
                               onChange={(e) => updateItem(item.id, "unit", e.target.value)}
-                              className="w-16 mx-auto text-center border-none bg-transparent focus:ring-0 text-slate-500 dark:text-slate-400 text-xs uppercase p-0 h-auto"
+                              className="w-12 mx-auto text-center border-none bg-transparent focus:ring-0 text-slate-500 dark:text-slate-400 text-[10px] uppercase p-0 h-auto"
                             />
                           </TableCell>
-                          <TableCell className="pr-8 py-4 text-right">
-                            <div className="flex items-center justify-end gap-2">
+                          <TableCell className="pr-4 py-2 text-right">
+                            <div className="flex items-center justify-end gap-1">
                               {items.length > 1 && (
                                 <Button
                                   variant="ghost"
                                   size="icon"
                                   onClick={() => removeItem(item.id)}
-                                  className="h-8 w-8 text-slate-300 hover:text-red-500 rounded-full"
+                                  className="h-6 w-6 text-slate-300 hover:text-red-500 rounded-full"
                                 >
-                                  <Trash2 className="w-4 h-4" />
+                                  <Trash2 className="w-3.5 h-3.5" />
                                 </Button>
                               )}
                             </div>
@@ -306,22 +306,22 @@ export function MaterialManagement() {
                       ))}
                     </TableBody>
                   </Table>
-                  <Button variant="ghost" className="w-full h-12 text-slate-400 hover:text-emerald-600 rounded-none border-t border-slate-100 dark:border-slate-800" onClick={addItem}>
-                    <Plus className="w-4 h-4 mr-2" /> Add More Items
+                  <Button variant="ghost" className="w-full h-10 text-slate-400 hover:text-emerald-600 rounded-none border-t border-slate-100 dark:border-slate-800 text-xs" onClick={addItem}>
+                    <Plus className="w-3 h-3 mr-2" /> Add More Items
                   </Button>
                 </div>
 
-                <div className="pt-8 flex justify-end gap-4">
-                  <Button variant="ghost" onClick={() => setIsDialogOpen(false)} className="rounded-xl px-8">Cancel</Button>
-                  <Button onClick={handleSave} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-8 shadow-lg shadow-emerald-100 dark:shadow-none">
-                    <Save className="w-4 h-4 mr-2" /> Save Material List
+                <div className="pt-4 flex justify-end gap-3">
+                  <Button variant="ghost" onClick={() => setIsDialogOpen(false)} className="rounded-lg h-9 px-6 text-sm">Cancel</Button>
+                  <Button onClick={handleSave} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg h-9 px-6 shadow-lg shadow-emerald-100 dark:shadow-none text-sm">
+                    <Save className="w-3.5 h-3.5 mr-2" /> Save Material List
                   </Button>
                 </div>
               </div>
 
               {/* Pad Footer */}
-              <div className="p-8 text-center border-t border-slate-100 dark:border-slate-800 mt-8">
-                <p className="text-slate-400 text-[10px] font-black tracking-widest uppercase">This is a material list for project planning</p>
+              <div className="p-4 text-center border-t border-slate-100 dark:border-slate-800 mt-4">
+                <p className="text-slate-400 text-[9px] font-black tracking-widest uppercase">This is a material list for project planning</p>
               </div>
             </div>
           </DialogContent>

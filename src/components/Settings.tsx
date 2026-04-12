@@ -14,7 +14,9 @@ import {
   Eye,
   EyeOff,
   Percent,
-  LogOut
+  LogOut,
+  Trash2,
+  AlertTriangle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +28,7 @@ import { AppSettings } from "../types";
 import { getSettings, saveSettings } from "../lib/storage";
 import { toast } from "sonner";
 import { auth } from "../lib/firebase";
+import { deleteUser } from "firebase/auth";
 
 interface SettingsProps {
   onLogout: () => void;
@@ -33,7 +36,34 @@ interface SettingsProps {
 
 export function Settings({ onLogout }: SettingsProps) {
   const [settings, setSettings] = React.useState<AppSettings>(getSettings());
+  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
+  const [isDeleting, setIsDeleting] = React.useState(false);
   const user = auth.currentUser;
+
+  const isOffline = localStorage.getItem("billbook_offline_mode") === "true";
+
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+    
+    try {
+      setIsDeleting(true);
+      await deleteUser(user);
+      toast.success("Account deleted successfully");
+      // The user is automatically signed out by Firebase on deletion
+      // We call onLogout to ensure the parent app state is updated
+      onLogout();
+    } catch (error: any) {
+      console.error(error);
+      if (error.code === 'auth/requires-recent-login') {
+        toast.error("For security reasons, please log out and log back in before deleting your account.");
+      } else {
+        toast.error(error.message || "Failed to delete account");
+      }
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
 
   const handleSave = () => {
     saveSettings(settings);
@@ -119,7 +149,7 @@ export function Settings({ onLogout }: SettingsProps) {
                     className="pl-10 h-11 bg-slate-50 dark:bg-slate-800 border-none rounded-xl dark:text-white"
                     value={settings.companyName}
                     onChange={(e) => updateSetting('companyName', e.target.value)}
-                    placeholder="e.g. Acme Corp"
+                    placeholder="business name"
                   />
                 </div>
               </div>
@@ -131,7 +161,7 @@ export function Settings({ onLogout }: SettingsProps) {
                     className="pl-10 h-11 bg-slate-50 dark:bg-slate-800 border-none rounded-xl dark:text-white"
                     value={settings.ownerName}
                     onChange={(e) => updateSetting('ownerName', e.target.value)}
-                    placeholder="e.g. John Doe"
+                    placeholder="name"
                   />
                 </div>
               </div>
@@ -143,7 +173,7 @@ export function Settings({ onLogout }: SettingsProps) {
                     className="pl-10 h-11 bg-slate-50 dark:bg-slate-800 border-none rounded-xl dark:text-white"
                     value={settings.gstNumber}
                     onChange={(e) => updateSetting('gstNumber', e.target.value)}
-                    placeholder="e.g. 24AAAAA0000A1Z5"
+                    placeholder="24AAAAA0000A1Z5"
                   />
                 </div>
               </div>
@@ -156,7 +186,7 @@ export function Settings({ onLogout }: SettingsProps) {
                     type="tel"
                     value={settings.phone}
                     onChange={(e) => updateSetting('phone', e.target.value)}
-                    placeholder="+92 300 1234567"
+                    placeholder="phone"
                   />
                 </div>
               </div>
@@ -168,7 +198,7 @@ export function Settings({ onLogout }: SettingsProps) {
                     className="pl-10 h-11 bg-slate-50 dark:bg-slate-800 border-none rounded-xl dark:text-white"
                     value={settings.email}
                     onChange={(e) => updateSetting('email', e.target.value)}
-                    placeholder="contact@company.com"
+                    placeholder="email"
                   />
                 </div>
               </div>
@@ -180,7 +210,7 @@ export function Settings({ onLogout }: SettingsProps) {
                     className="w-full pl-10 pt-2.5 min-h-[100px] bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:text-white"
                     value={settings.address}
                     onChange={(e) => updateSetting('address', e.target.value)}
-                    placeholder="Enter full business address"
+                    placeholder="address"
                   />
                 </div>
               </div>
@@ -351,18 +381,78 @@ export function Settings({ onLogout }: SettingsProps) {
           <Card className="border-none shadow-lg rounded-3xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30">
             <CardContent className="p-6 flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-red-900 dark:text-red-400">Account Session</h3>
-                <p className="text-sm text-red-600 dark:text-red-500/70">Sign out from your current session on this device.</p>
+                <h3 className="text-lg font-bold text-red-900 dark:text-red-400">
+                  {isOffline ? "Offline Session" : "Account Session"}
+                </h3>
+                <p className="text-sm text-red-600 dark:text-red-500/70">
+                  {isOffline ? "Exit offline mode and return to login screen." : "Sign out from your current session on this device."}
+                </p>
               </div>
               <Button 
                 variant="destructive" 
                 onClick={onLogout}
                 className="rounded-xl px-6 gap-2"
               >
-                <LogOut className="w-4 h-4" /> Logout
+                <LogOut className="w-4 h-4" /> {isOffline ? "Exit Offline Mode" : "Logout"}
               </Button>
             </CardContent>
           </Card>
+
+          {!isOffline && (
+            <Card className="border-none shadow-lg rounded-3xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50">
+              <CardHeader>
+                <CardTitle className="text-red-600 dark:text-red-400 flex items-center gap-2">
+                  <Trash2 className="w-5 h-5" /> Danger Zone
+                </CardTitle>
+                <CardDescription>Irreversible actions for your account</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {!showDeleteConfirm ? (
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-bold text-slate-700 dark:text-slate-200">Delete Account</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Permanently remove your account and all data.</p>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setShowDeleteConfirm(true)}
+                      className="border-red-200 text-red-600 hover:bg-red-50 dark:border-red-900/50 dark:text-red-400 dark:hover:bg-red-950/30 rounded-xl"
+                    >
+                      Delete Account
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="bg-red-100 dark:bg-red-900/30 p-4 rounded-2xl space-y-4 border border-red-200 dark:border-red-800/50">
+                    <div className="flex items-start gap-3">
+                      <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-bold text-red-900 dark:text-red-300">Are you absolutely sure?</p>
+                        <p className="text-xs text-red-700 dark:text-red-400/80">This action cannot be undone. All your bills, customers, and settings will be permanently deleted.</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <Button 
+                        variant="destructive" 
+                        onClick={handleDeleteAccount}
+                        disabled={isDeleting}
+                        className="flex-1 rounded-xl"
+                      >
+                        {isDeleting ? "Deleting..." : "Yes, Delete Everything"}
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setShowDeleteConfirm(false)}
+                        disabled={isDeleting}
+                        className="flex-1 rounded-xl bg-white dark:bg-slate-800"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>

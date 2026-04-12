@@ -1,5 +1,5 @@
 import * as React from "react";
-import { User, Lock, Mail, ArrowRight, ShieldCheck, Building2, MapPin, Globe, Coins } from "lucide-react";
+import { User, Lock, Mail, ArrowRight, ShieldCheck, Building2, MapPin, Globe, Coins, Phone, Eye, EyeOff, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,8 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import { saveSettings, getSettings } from "../lib/storage";
-import { auth, googleProvider, signInWithPopup } from "../lib/firebase";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth, db, googleProvider, signInWithPopup } from "../lib/firebase";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from "firebase/auth";
 
 interface AuthProps {
   onLogin: (user: any) => void;
@@ -24,7 +24,21 @@ export function Auth({ onLogin }: AuthProps) {
   const [address, setAddress] = React.useState("");
   const [country, setCountry] = React.useState("Pakistan");
   const [currency, setCurrency] = React.useState("PKR");
+  const [phone, setPhone] = React.useState("");
+  const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+
+  const handleOfflineUse = () => {
+    const offlineUser = {
+      uid: "offline-user",
+      displayName: "Offline User",
+      email: "offline@billbook.pro",
+      isOffline: true
+    };
+    localStorage.setItem("billbook_offline_mode", "true");
+    onLogin(offlineUser);
+    toast.success("Using app in Offline Mode. Data will be saved locally only.");
+  };
 
   const handleGoogleSignIn = async () => {
     try {
@@ -34,7 +48,35 @@ export function Auth({ onLogin }: AuthProps) {
       toast.success(`Welcome, ${result.user.displayName}!`);
     } catch (error: any) {
       console.error(error);
-      toast.error(error.message || "Google Sign-In failed");
+      let message = "Google Sign-In failed";
+      if (error.code === 'auth/popup-closed-by-user') {
+        message = "Sign-in popup was closed. Please try again and keep the window open. If it still fails, try opening the app in a new tab.";
+      } else if (error.code === 'auth/cancelled-popup-request') {
+        message = "Sign-in request was cancelled.";
+      } else if (error.code === 'auth/popup-blocked') {
+        message = "Sign-in popup was blocked by your browser.";
+      } else if (error.message) {
+        message = error.message;
+      }
+      toast.error(`${message} [${error.code || 'unknown'}]`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) {
+      toast.error("Please enter your email address first.");
+      return;
+    }
+    try {
+      setLoading(true);
+      await sendPasswordResetEmail(auth, trimmedEmail);
+      toast.success("Password reset email sent! Please check your inbox.");
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message || "Failed to send reset email.");
     } finally {
       setLoading(false);
     }
@@ -43,7 +85,10 @@ export function Auth({ onLogin }: AuthProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !password || (!isLogin && (!name || !companyName || !address))) {
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
+    if (!trimmedEmail || !trimmedPassword || (!isLogin && (!name || !companyName || !address || !phone))) {
       toast.error("Please fill all fields");
       return;
     }
@@ -51,11 +96,11 @@ export function Auth({ onLogin }: AuthProps) {
     try {
       setLoading(true);
       if (isLogin) {
-        const result = await signInWithEmailAndPassword(auth, email, password);
+        const result = await signInWithEmailAndPassword(auth, trimmedEmail, trimmedPassword);
         onLogin(result.user);
         toast.success(`Welcome back!`);
       } else {
-        const result = await createUserWithEmailAndPassword(auth, email, password);
+        const result = await createUserWithEmailAndPassword(auth, trimmedEmail, trimmedPassword);
         await updateProfile(result.user, { displayName: name });
         
         // Save initial settings
@@ -67,7 +112,8 @@ export function Auth({ onLogin }: AuthProps) {
           country,
           currency,
           ownerName: name,
-          email: email
+          email: trimmedEmail,
+          phone: phone
         });
 
         onLogin(result.user);
@@ -75,7 +121,27 @@ export function Auth({ onLogin }: AuthProps) {
       }
     } catch (error: any) {
       console.error(error);
-      toast.error(error.message || "Authentication failed");
+      let message = "Authentication failed";
+      
+      if (error.code === 'auth/invalid-credential') {
+        message = isLogin 
+          ? "Invalid email or password. If you signed up with Google, please use the Google button. If you haven't created an account, click 'Sign Up'."
+          : "Could not create account. This email might already be linked to a Google account. Try signing in with Google or use a different email.";
+      } else if (error.code === 'auth/operation-not-allowed') {
+        message = "Email/Password login is not enabled. Please use Google Sign-In or enable it in Firebase Console.";
+      } else if (error.code === 'auth/email-already-in-use') {
+        message = "This email is already registered. Please sign in instead.";
+      } else if (error.code === 'auth/weak-password') {
+        message = "Password should be at least 6 characters.";
+      } else if (error.code === 'auth/user-not-found') {
+        message = "No account found with this email. Please sign up.";
+      } else if (error.code === 'auth/wrong-password') {
+        message = "Incorrect password. Please try again.";
+      } else if (error.message) {
+        message = error.message;
+      }
+      
+      toast.error(`${message} [${error.code || 'unknown'}]`);
     } finally {
       setLoading(false);
     }
@@ -97,7 +163,7 @@ export function Auth({ onLogin }: AuthProps) {
           <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-blue-200 dark:shadow-none">
             <ShieldCheck className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">BillBook Pro</h1>
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Bill Book Pro</h1>
           <p className="text-slate-500 dark:text-slate-400 font-medium">Professional Billing & Team Management</p>
         </div>
 
@@ -127,7 +193,7 @@ export function Auth({ onLogin }: AuthProps) {
                         <div className="relative">
                           <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                           <Input
-                            placeholder="John Doe"
+                            placeholder="name"
                             className="pl-12 h-12 bg-slate-50 dark:bg-slate-800 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -135,11 +201,11 @@ export function Auth({ onLogin }: AuthProps) {
                         </div>
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-slate-500 dark:text-slate-400 ml-1 uppercase tracking-wider">Company Name</label>
+                        <label className="text-xs font-bold text-slate-500 dark:text-slate-400 ml-1 uppercase tracking-wider">Business Name</label>
                         <div className="relative">
                           <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                           <Input
-                            placeholder="F.Z Electric Services"
+                            placeholder="business name"
                             className="pl-12 h-12 bg-slate-50 dark:bg-slate-800 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white"
                             value={companyName}
                             onChange={(e) => setCompanyName(e.target.value)}
@@ -148,16 +214,30 @@ export function Auth({ onLogin }: AuthProps) {
                       </div>
                     </div>
 
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 ml-1 uppercase tracking-wider">Business Address</label>
-                      <div className="relative">
-                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                        <Input
-                          placeholder="Gujranwala, Pakistan"
-                          className="pl-12 h-12 bg-slate-50 dark:bg-slate-800 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white"
-                          value={address}
-                          onChange={(e) => setAddress(e.target.value)}
-                        />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-slate-500 dark:text-slate-400 ml-1 uppercase tracking-wider">Phone Number</label>
+                        <div className="relative">
+                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                          <Input
+                            placeholder="phone"
+                            className="pl-12 h-12 bg-slate-50 dark:bg-slate-800 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-slate-500 dark:text-slate-400 ml-1 uppercase tracking-wider">Business Address</label>
+                        <div className="relative">
+                          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                          <Input
+                            placeholder="address"
+                            className="pl-12 h-12 bg-slate-50 dark:bg-slate-800 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                          />
+                        </div>
                       </div>
                     </div>
 
@@ -267,7 +347,7 @@ export function Auth({ onLogin }: AuthProps) {
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Input
                     type="email"
-                    placeholder="name@company.com"
+                    placeholder="email"
                     className="pl-12 h-12 bg-slate-50 dark:bg-slate-800 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -280,13 +360,31 @@ export function Auth({ onLogin }: AuthProps) {
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
-                    className="pl-12 h-12 bg-slate-50 dark:bg-slate-800 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white"
+                    className="pl-12 pr-12 h-12 bg-slate-50 dark:bg-slate-800 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
                 </div>
+                {isLogin && (
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      onClick={handleForgotPassword}
+                      className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      Forgot Password?
+                    </button>
+                  </div>
+                )}
               </div>
 
               <Button type="submit" disabled={loading} className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-blue-100 dark:shadow-none mt-4 group">
@@ -313,9 +411,20 @@ export function Auth({ onLogin }: AuthProps) {
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-5 h-5" alt="Google" />
                 Google
               </Button>
+
+              <Button 
+                type="button" 
+                variant="outline" 
+                disabled={loading}
+                onClick={handleOfflineUse}
+                className="w-full h-12 border-slate-200 dark:border-slate-800 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 dark:text-white"
+              >
+                <WifiOff className="w-5 h-5 text-slate-500" />
+                Offline Use
+              </Button>
             </form>
 
-            <div className="mt-8 text-center">
+            <div className="mt-8 text-center space-y-4">
               <p className="text-slate-500 dark:text-slate-400 font-medium">
                 {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
                 <button
@@ -325,6 +434,7 @@ export function Auth({ onLogin }: AuthProps) {
                   {isLogin ? "Sign Up" : "Sign In"}
                 </button>
               </p>
+              
             </div>
           </CardContent>
         </Card>

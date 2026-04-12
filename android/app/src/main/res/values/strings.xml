@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">BillBook Pro</string>
+    <string name="title_activity_main">BillBook Pro</string>
+    <string name="package_name">com.billbook.pro</string>
+    <string name="custom_url_scheme">com.billbook.pro</string>
+</resources>

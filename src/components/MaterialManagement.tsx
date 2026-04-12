@@ -214,7 +214,9 @@ export function MaterialManagement() {
                 </h1>
                 <p className="text-slate-500 dark:text-slate-400 font-medium">{settings.address || "Gujranwala Pakistan"}</p>
                 <div className="flex items-center justify-center gap-6 text-slate-900 dark:text-white font-bold tracking-widest text-sm">
-                  <span>{settings.phone || "03246043916"}</span>
+                  <a href={`tel:${settings.phone || "03246043916"}`} className="hover:text-emerald-600 transition-colors">
+                    {settings.phone || "03246043916"}
+                  </a>
                 </div>
                 <div className="pt-2">
                   <span className="bg-emerald-600 text-white px-6 py-1 rounded-full text-[10px] font-black tracking-widest uppercase">Material List</span>
@@ -328,26 +330,26 @@ export function MaterialManagement() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredLists.length === 0 ? (
-          <div className="col-span-full text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
-            <p className="text-slate-500 font-medium">No material lists found</p>
+          <div className="col-span-full text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800">
+            <p className="text-slate-500 dark:text-slate-400 font-medium">No material lists found</p>
           </div>
         ) : (
           filteredLists.map((list) => (
-            <Card key={list.id} className="group overflow-hidden border-slate-200 hover:border-emerald-200 transition-all hover:shadow-md rounded-2xl bg-white">
+            <Card key={list.id} className="group overflow-hidden border-slate-200 dark:border-slate-800 hover:border-emerald-200 dark:hover:border-emerald-900 transition-all hover:shadow-md rounded-2xl bg-white dark:bg-slate-900">
               <CardContent className="p-0">
                 <div className="p-5 flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div>
                       {list.customerName && (
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{list.customerName}</p>
+                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-0.5">{list.customerName}</p>
                       )}
-                      <h3 className="text-lg font-black text-emerald-600">{list.title}</h3>
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{format(new Date(list.date), "dd MMM yyyy")}</p>
+                      <h3 className="text-lg font-black text-emerald-600 dark:text-emerald-500">{list.title}</h3>
+                      <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{format(new Date(list.date), "dd MMM yyyy")}</p>
                     </div>
                   </div>
                 </div>
-                <div className="px-5 py-3 bg-slate-50/50 border-t border-slate-100 flex justify-between items-center">
-                  <span className="text-xs font-bold text-slate-500">{list.items.length} Items</span>
+                <div className="px-5 py-3 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400">{list.items.length} Items</span>
                   <div className="flex gap-1">
                     <DropdownMenu>
                       <DropdownMenuTrigger className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8 rounded-full cursor-pointer")}>
@@ -378,59 +380,61 @@ export function MaterialManagement() {
 
       {/* Export Template (Hidden) */}
       <div className="fixed left-[-9999px] top-0">
-        <div ref={exportRef} className="w-[800px] bg-white p-12 text-slate-900 font-sans">
-          <div className="text-center space-y-2 pb-8 border-b border-slate-100">
-            <h1 className="text-4xl font-black tracking-wider text-emerald-600 uppercase">
+        <div ref={exportRef} className="w-[800px] bg-white dark:bg-slate-900 p-12 text-slate-900 dark:text-white font-sans">
+          <div className="text-center space-y-2 pb-8 border-b border-slate-100 dark:border-slate-800">
+            <h1 className="text-4xl font-black tracking-wider text-emerald-600 dark:text-emerald-500 uppercase">
               {settings.companyName || "F.Z ELECTRIC SERVICE'S"}
             </h1>
-            <p className="text-slate-500 font-medium">{settings.address || "Gujranwala Pakistan"}</p>
-            <div className="flex items-center justify-center gap-6 text-slate-900 font-bold tracking-widest text-lg">
-              <span>{settings.phone || "03246043916"}</span>
+            <p className="text-slate-500 dark:text-slate-400 font-medium">{settings.address || "Gujranwala Pakistan"}</p>
+            <div className="flex items-center justify-center gap-6 text-slate-900 dark:text-white font-bold tracking-widest text-lg">
+              <a href={`tel:${settings.phone || "03246043916"}`} className="hover:text-emerald-600 transition-colors">
+                {settings.phone || "03246043916"}
+              </a>
             </div>
             <div className="pt-4">
               <span className="bg-emerald-600 text-white px-6 py-1 rounded-full text-xs font-black tracking-widest uppercase">Material List</span>
             </div>
           </div>
 
-          <div className="py-8 flex justify-between items-end border-b border-slate-100">
+          <div className="py-8 flex justify-between items-end border-b border-slate-100 dark:border-slate-800">
             <div className="space-y-4">
               {activeList?.customerName && (
                 <div className="space-y-1">
                   <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">CUSTOMER NAME</h3>
-                  <p className="text-xl font-bold text-slate-900">{activeList.customerName}</p>
+                  <p className="text-xl font-bold text-slate-900 dark:text-white">{activeList.customerName}</p>
                 </div>
               )}
               <div className="space-y-1">
                 <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">PROJECT / TITLE</h3>
-                <p className="text-3xl font-black text-slate-900">{activeList?.title}</p>
+                <p className="text-3xl font-black text-slate-900 dark:text-white">{activeList?.title}</p>
               </div>
             </div>
             <div className="text-right space-y-1">
               <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">DATE</h3>
-              <p className="text-xl font-bold text-slate-900">{activeList && format(new Date(activeList.date), "dd MMM yyyy")}</p>
+              <p className="text-xl font-bold text-slate-900 dark:text-white">{activeList && format(new Date(activeList.date), "dd MMM yyyy")}</p>
             </div>
           </div>
 
           <table className="w-full mt-8">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-100">
+              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
                 <th className="py-4 px-8 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">MATERIAL NAME</th>
                 <th className="py-4 px-4 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">QTY</th>
                 <th className="py-4 px-4 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">UNIT</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
               {activeList?.items.map((item) => (
                 <tr key={item.id}>
-                  <td className="py-5 px-8 font-bold text-slate-900">{item.name}</td>
-                  <td className="py-5 px-4 text-center font-medium text-slate-600">{item.quantity}</td>
-                  <td className="py-5 px-4 text-center font-medium text-slate-500 text-xs uppercase">{item.unit}</td>
+                  <td className="py-5 px-8 font-bold text-slate-900 dark:text-white">{item.name}</td>
+                  <td className="py-5 px-4 text-center font-medium text-slate-600 dark:text-slate-400">{item.quantity}</td>
+                  <td className="py-5 px-4 text-center font-medium text-slate-500 dark:text-slate-400 text-xs uppercase">{item.unit}</td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-          <div className="mt-20 pt-12 text-center border-t border-slate-100">
+          <div className="mt-20 pt-12 text-center border-t border-slate-100 dark:border-slate-800">
             <p className="text-slate-400 text-xs font-medium tracking-widest uppercase">This is a material list for project planning.</p>
           </div>
         </div>

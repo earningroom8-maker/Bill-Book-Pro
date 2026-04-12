@@ -99,25 +99,27 @@ export function BillPreview({ bill, onClose }: BillPreviewProps) {
         <div className="flex-1 overflow-y-auto p-8 bg-slate-100">
           <div 
             ref={billRef}
-            className={cn("bg-white mx-auto p-12 w-[800px] text-slate-900 font-sans", isExporting && "export-mode")}
+            className={cn("bg-white dark:bg-slate-900 mx-auto p-12 w-[800px] text-slate-900 dark:text-white font-sans", isExporting && "export-mode")}
             style={{ width: '794px' }} // A4 width at 96 DPI
           >
-            <div className="text-center space-y-2 pb-8 border-b border-slate-100">
+            <div className="text-center space-y-2 pb-8 border-b border-slate-100 dark:border-slate-800">
               <h1 className={cn("text-4xl font-black tracking-wider uppercase", themeColor)}>
                 {bill.companyName || settings.companyName || "F.Z ELECTRIC SERVICE'S"}
               </h1>
               {settings.ownerName && (
-                <p className="text-slate-700 font-bold">{settings.ownerName}</p>
+                <p className="text-slate-700 dark:text-slate-300 font-bold">{settings.ownerName}</p>
               )}
-              <p className="text-slate-500 font-medium">{settings.address || "Gujranwala Pakistan"}</p>
-              <div className="flex items-center justify-center gap-6 text-slate-900 font-bold tracking-widest text-lg">
-                <span>{settings.phone || "03246043916"}</span>
+              <p className="text-slate-500 dark:text-slate-400 font-medium">{settings.address || "Gujranwala Pakistan"}</p>
+              <div className="flex items-center justify-center gap-6 text-slate-900 dark:text-white font-bold tracking-widest text-lg">
+                <a href={`tel:${settings.phone || "03246043916"}`} className="hover:text-blue-600 transition-colors">
+                  {settings.phone || "03246043916"}
+                </a>
                 {settings.showGST && settings.gstNumber && (
                   <span className={themeColor}>GST: {settings.gstNumber}</span>
                 )}
               </div>
               {settings.showEmail && settings.email && (
-                <p className="text-slate-500 text-sm">{settings.email}</p>
+                <p className="text-slate-500 dark:text-slate-400 text-sm">{settings.email}</p>
               )}
               <div className="pt-2">
                 <span className={cn("text-white px-6 py-1 rounded-full text-xs font-black tracking-widest uppercase", bgColor)}>
@@ -127,11 +129,15 @@ export function BillPreview({ bill, onClose }: BillPreviewProps) {
             </div>
 
             {/* Customer & Bill Info */}
-            <div className="grid grid-cols-2 border-b border-slate-100">
-              <div className="p-8 border-r border-slate-100 space-y-3">
+            <div className="grid grid-cols-2 border-b border-slate-100 dark:border-slate-800">
+              <div className="p-8 border-r border-slate-100 dark:border-slate-800 space-y-3">
                 <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">BILLED TO</h3>
-                <p className="text-2xl font-black text-slate-900">{bill.customer.name}</p>
-                {bill.customer.mobile && <p className="text-slate-600 font-medium">{bill.customer.mobile}</p>}
+                <p className="text-2xl font-black text-slate-900 dark:text-white">{bill.customer.name}</p>
+                {bill.customer.mobile && (
+                  <a href={`tel:${bill.customer.mobile}`} className="text-blue-600 font-bold hover:underline">
+                    {bill.customer.mobile}
+                  </a>
+                )}
               </div>
               <div className="p-8 space-y-6">
                 <div className="space-y-1">
@@ -140,7 +146,7 @@ export function BillPreview({ bill, onClose }: BillPreviewProps) {
                 </div>
                 <div className="space-y-1">
                   <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Date</h3>
-                  <p className="text-xl font-bold text-slate-900">{format(new Date(bill.date), "dd MMM yyyy")}</p>
+                  <p className="text-xl font-bold text-slate-900 dark:text-white">{format(new Date(bill.date), "dd MMM yyyy")}</p>
                 </div>
               </div>
             </div>
@@ -148,23 +154,23 @@ export function BillPreview({ bill, onClose }: BillPreviewProps) {
             {/* Items Table */}
             <table className="w-full">
               <thead>
-                <tr className="bg-slate-50/50 border-b border-slate-100">
+                <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
                   <th className="py-4 px-8 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">ITEM</th>
                   <th className="py-4 px-4 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">QTY</th>
                   <th className="py-4 px-4 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">RATE</th>
                   <th className="py-4 px-8 text-right text-[10px] font-black uppercase tracking-widest text-slate-400">TOTAL</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-50">
+              <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
                 {bill.items.map((item) => (
                   <tr key={item.id}>
-                    <td className="py-5 px-8 font-bold text-slate-900">{item.name}</td>
-                    <td className="py-5 px-4 text-center font-medium text-slate-600">{item.quantity}</td>
-                    <td className="py-5 px-4 text-center font-medium text-slate-600">
+                    <td className="py-5 px-8 font-bold text-slate-900 dark:text-white">{item.name}</td>
+                    <td className="py-5 px-4 text-center font-medium text-slate-600 dark:text-slate-400">{item.quantity}</td>
+                    <td className="py-5 px-4 text-center font-medium text-slate-600 dark:text-slate-400">
                       {getCurrencySymbol(settings.currency)}
                       {item.price.toLocaleString()}
                     </td>
-                    <td className="py-5 px-8 text-right font-black text-slate-900">
+                    <td className="py-5 px-8 text-right font-black text-slate-900 dark:text-white">
                       {getCurrencySymbol(settings.currency)}
                       {item.total.toLocaleString()}
                     </td>
@@ -176,7 +182,7 @@ export function BillPreview({ bill, onClose }: BillPreviewProps) {
             {/* Summary Section */}
             <div className="p-12 space-y-8">
               <div className="flex justify-between items-center">
-                <span className="text-2xl font-black text-slate-900">Total</span>
+                <span className="text-2xl font-black text-slate-900 dark:text-white">Total</span>
                 <span className={cn("text-3xl font-black", themeColor)}>
                   {getCurrencySymbol(settings.currency)}
                   {bill.total.toLocaleString()}
@@ -193,8 +199,8 @@ export function BillPreview({ bill, onClose }: BillPreviewProps) {
                     </span>
                   </div>
 
-                  <div className={cn("p-6 rounded-3xl flex justify-between items-center border", isQuotation ? "bg-purple-50 border-purple-100" : "bg-blue-50 border-blue-100")}>
-                    <span className={cn("text-xl font-black", isQuotation ? "text-purple-800" : "text-blue-800")}>Balance Due</span>
+                  <div className={cn("p-6 rounded-3xl flex justify-between items-center border", isQuotation ? "bg-purple-50 dark:bg-purple-900/10 border-purple-100 dark:border-purple-900/30" : "bg-blue-50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/30")}>
+                    <span className={cn("text-xl font-black", isQuotation ? "text-purple-800 dark:text-purple-300" : "text-blue-800 dark:text-blue-300")}>Balance Due</span>
                     <span className={cn("text-2xl font-black", themeColor)}>
                       {getCurrencySymbol(settings.currency)}
                       {bill.balanceDue.toLocaleString()}
@@ -205,7 +211,7 @@ export function BillPreview({ bill, onClose }: BillPreviewProps) {
             </div>
 
             {/* Footer */}
-            <div className="mt-20 pt-12 text-center border-t border-slate-100">
+            <div className="mt-20 pt-12 text-center border-t border-slate-100 dark:border-slate-800">
               <p className="text-slate-400 text-xs font-medium tracking-widest uppercase">Thank you for your business!</p>
             </div>
           </div>

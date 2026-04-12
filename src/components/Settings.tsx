@@ -153,6 +153,7 @@ export function Settings({ onLogout }: SettingsProps) {
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <Input 
                     className="pl-10 h-11 bg-slate-50 dark:bg-slate-800 border-none rounded-xl dark:text-white"
+                    type="tel"
                     value={settings.phone}
                     onChange={(e) => updateSetting('phone', e.target.value)}
                     placeholder="+92 300 1234567"

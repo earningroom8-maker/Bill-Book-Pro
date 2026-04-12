@@ -136,6 +136,7 @@ export function TeamManagement() {
                   <label className="text-xs font-bold text-slate-500 ml-1 uppercase tracking-wider">Phone Number</label>
                   <Input
                     placeholder="Enter phone"
+                    type="tel"
                     className="h-10 bg-slate-50 border-none rounded-lg text-sm"
                     value={newMember.phone}
                     onChange={(e) => setNewMember({ ...newMember, phone: e.target.value })}
@@ -196,7 +197,9 @@ export function TeamManagement() {
                       <TableCell className="text-slate-600 text-sm py-3">
                         <div className="flex items-center gap-2">
                           <Phone className="w-3 h-3 text-slate-400" />
-                          {member.phone}
+                          <a href={`tel:${member.phone}`} className="text-blue-600 hover:underline font-medium">
+                            {member.phone}
+                          </a>
                         </div>
                       </TableCell>
                       <TableCell className="text-center py-3">

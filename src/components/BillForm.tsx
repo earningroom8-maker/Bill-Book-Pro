@@ -235,43 +235,46 @@ export function BillForm({ onSave }: BillFormProps) {
         </div>
       </div>
 
-      <Card ref={billRef} className={cn("border border-slate-200 shadow-sm rounded-[2rem] overflow-hidden bg-white print-content", isExporting && "export-mode")}>
+      <Card ref={billRef} className={cn("border border-slate-200 dark:border-slate-800 shadow-sm rounded-[2rem] overflow-hidden bg-white dark:bg-slate-900 print-content", isExporting && "export-mode")}>
         <CardContent className="p-0">
           {/* Business Header */}
-          <div className="p-8 text-center space-y-2 border-b border-slate-100">
+          <div className="p-8 text-center space-y-2 border-b border-slate-100 dark:border-slate-800">
             <h1 className="text-3xl font-black tracking-wider text-blue-600 uppercase">
               {settings.companyName || "F.Z ELECTRIC SERVICE'S"}
             </h1>
             {settings.ownerName && (
-              <p className="text-slate-700 font-bold text-sm">{settings.ownerName}</p>
+              <p className="text-slate-700 dark:text-slate-300 font-bold text-sm">{settings.ownerName}</p>
             )}
-            <p className="text-slate-500 font-medium">{settings.address || "Gujranwala Pakistan"}</p>
-            <div className="flex items-center justify-center gap-4 text-slate-900 font-bold tracking-widest">
-              <span>{settings.phone || "03246043916"}</span>
+            <p className="text-slate-500 dark:text-slate-400 font-medium">{settings.address || "Gujranwala Pakistan"}</p>
+            <div className="flex items-center justify-center gap-4 text-slate-900 dark:text-white font-bold tracking-widest">
+              <a href={`tel:${settings.phone || "03246043916"}`} className="hover:text-blue-600 transition-colors">
+                {settings.phone || "03246043916"}
+              </a>
               {settings.showGST && settings.gstNumber && (
                 <span className="text-blue-600">GST: {settings.gstNumber}</span>
               )}
             </div>
             {settings.showEmail && settings.email && (
-              <p className="text-slate-500 text-sm">{settings.email}</p>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">{settings.email}</p>
             )}
           </div>
 
           {/* Customer & Bill Info */}
-          <div className="grid grid-cols-2 border-b border-slate-100">
-            <div className="p-6 border-r border-slate-100 space-y-3">
+          <div className="grid grid-cols-2 border-b border-slate-100 dark:border-slate-800">
+            <div className="p-6 border-r border-slate-100 dark:border-slate-800 space-y-3">
               <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">BILLED TO</Label>
               <Input
                 placeholder="Customer Name"
                 value={customer.name}
                 onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
-                className="border-slate-200 rounded-lg h-10 font-bold text-lg focus:ring-blue-600"
+                className="border-slate-200 dark:border-slate-700 rounded-lg h-10 font-bold text-lg focus:ring-blue-600 bg-white dark:bg-slate-800 dark:text-white"
               />
               <Input
                 placeholder="Mobile Number"
+                type="tel"
                 value={customer.mobile}
                 onChange={(e) => setCustomer({ ...customer, mobile: e.target.value })}
-                className="border-slate-200 rounded-lg h-8 text-sm focus:ring-blue-600"
+                className="border-slate-200 dark:border-slate-700 rounded-lg h-8 text-sm focus:ring-blue-600 bg-white dark:bg-slate-800 dark:text-white"
               />
             </div>
             <div className="p-6 space-y-4">
@@ -281,7 +284,7 @@ export function BillForm({ onSave }: BillFormProps) {
               </div>
               <div className="space-y-1">
                 <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Date</Label>
-                <p className="text-lg font-bold text-slate-900">{format(new Date(), "dd MMM yyyy")}</p>
+                <p className="text-lg font-bold text-slate-900 dark:text-white">{format(new Date(), "dd MMM yyyy")}</p>
               </div>
             </div>
           </div>
@@ -289,8 +292,8 @@ export function BillForm({ onSave }: BillFormProps) {
           {/* Items Table */}
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-slate-50/50">
-                <TableRow className="hover:bg-transparent border-b border-slate-100">
+              <TableHeader className="bg-slate-50/50 dark:bg-slate-800/50">
+                <TableRow className="hover:bg-transparent border-b border-slate-100 dark:border-slate-800">
                   <TableHead className="text-[10px] font-black uppercase tracking-widest text-slate-400 h-10">ITEM</TableHead>
                   <TableHead className="text-[10px] font-black uppercase tracking-widest text-slate-400 h-10 text-center">QTY</TableHead>
                   <TableHead className="text-[10px] font-black uppercase tracking-widest text-slate-400 h-10 text-center">RATE</TableHead>
@@ -299,14 +302,14 @@ export function BillForm({ onSave }: BillFormProps) {
               </TableHeader>
               <TableBody>
                 {items.map((item, index) => (
-                  <TableRow key={item.id} className="hover:bg-slate-50/30 border-b border-slate-50">
+                  <TableRow key={item.id} className="hover:bg-slate-50/30 dark:hover:bg-slate-800/30 border-b border-slate-50 dark:border-slate-800/50">
                     <TableCell className="py-3">
                       <Input
                         placeholder={`Item ${index + 1}`}
                         value={item.name}
                         onChange={(e) => updateItem(item.id, "name", e.target.value)}
                         onKeyDown={(e) => handleKeyDown(e, index)}
-                        className="border-slate-200 rounded-lg h-9 focus:ring-[#F97316] focus:border-[#F97316]"
+                        className="border-slate-200 dark:border-slate-700 rounded-lg h-9 focus:ring-[#F97316] focus:border-[#F97316] bg-white dark:bg-slate-800 dark:text-white"
                       />
                     </TableCell>
                     <TableCell className="py-3">
@@ -314,7 +317,7 @@ export function BillForm({ onSave }: BillFormProps) {
                         type="number"
                         value={item.quantity || ""}
                         onChange={(e) => updateItem(item.id, "quantity", parseInt(e.target.value) || 0)}
-                        className="w-16 mx-auto text-center border-slate-200 rounded-lg h-9 focus:ring-[#F97316] focus:border-[#F97316]"
+                        className="w-16 mx-auto text-center border-slate-200 dark:border-slate-700 rounded-lg h-9 focus:ring-[#F97316] focus:border-[#F97316] bg-white dark:bg-slate-800 dark:text-white"
                       />
                     </TableCell>
                     <TableCell className="py-3">
@@ -322,12 +325,12 @@ export function BillForm({ onSave }: BillFormProps) {
                         type="number"
                         value={item.price || ""}
                         onChange={(e) => updateItem(item.id, "price", parseFloat(e.target.value) || 0)}
-                        className="w-24 mx-auto text-center border-slate-200 rounded-lg h-9 focus:ring-[#F97316] focus:border-[#F97316]"
+                        className="w-24 mx-auto text-center border-slate-200 dark:border-slate-700 rounded-lg h-9 focus:ring-[#F97316] focus:border-[#F97316] bg-white dark:bg-slate-800 dark:text-white"
                       />
                     </TableCell>
                     <TableCell className="py-3 text-right pr-6">
                       <div className="flex items-center justify-end gap-2">
-                        <span className="font-bold text-slate-900">
+                        <span className="font-bold text-slate-900 dark:text-white">
                           {getCurrencySymbol(settings.currency)}
                           {item.total.toLocaleString()}
                         </span>
@@ -350,14 +353,14 @@ export function BillForm({ onSave }: BillFormProps) {
           </div>
 
           {/* Helper Text */}
-          <div className="p-4 text-center border-b border-slate-100">
+          <div className="p-4 text-center border-b border-slate-100 dark:border-slate-800">
             <p className="text-xs text-slate-400 font-medium no-export">Enter daba ke naya row add karo</p>
           </div>
 
           {/* Summary Section */}
           <div className="p-8 space-y-6">
             <div className="flex justify-between items-center">
-              <span className="text-xl font-black text-slate-900">Total</span>
+              <span className="text-xl font-black text-slate-900 dark:text-white">Total</span>
               <span className="text-2xl font-black text-blue-600">
                 {getCurrencySymbol(settings.currency)}
                 {total.toLocaleString()}
@@ -374,13 +377,13 @@ export function BillForm({ onSave }: BillFormProps) {
                   type="number"
                   value={receivedAmount}
                   onChange={(e) => setReceivedAmount(parseFloat(e.target.value) || 0)}
-                  className="w-32 text-right border-slate-200 rounded-xl h-10 bg-green-50/30 focus:ring-green-500 focus:border-green-500 font-bold"
+                  className="w-32 text-right border-slate-200 dark:border-slate-700 rounded-xl h-10 bg-green-50/30 dark:bg-green-900/10 focus:ring-green-500 focus:border-green-500 font-bold dark:text-white"
                 />
               </div>
             </div>
 
-            <div className="bg-blue-50/50 p-4 rounded-2xl flex justify-between items-center border border-blue-100">
-              <span className="text-lg font-black text-blue-800">Balance Due</span>
+            <div className="bg-blue-50/50 dark:bg-blue-900/10 p-4 rounded-2xl flex justify-between items-center border border-blue-100 dark:border-blue-900/30">
+              <span className="text-lg font-black text-blue-800 dark:text-blue-300">Balance Due</span>
               <span className="text-xl font-black text-blue-600">
                 {getCurrencySymbol(settings.currency)}
                 {balanceDue.toLocaleString()}

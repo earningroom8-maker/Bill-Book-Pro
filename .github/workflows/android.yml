@@ -29,14 +29,8 @@ jobs:
       - name: Build Web App
         run: npm run build
 
-      - name: Check Build Output
-        run: ls -R dist || echo "Dist folder not found"
-
       - name: Sync Capacitor
         run: npx cap sync android
-
-      - name: Diagnostic - Check Plugins
-        run: ls -R android/capacitor-cordova-android-plugins || echo "Plugins dir not found"
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3

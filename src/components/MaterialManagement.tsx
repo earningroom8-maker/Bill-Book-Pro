@@ -13,8 +13,7 @@ import { format } from "date-fns";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
-import domtoimage from "dom-to-image-more";
-import jsPDF from "jspdf";
+import { exportToImage, exportToPDF, printElement } from "../lib/export";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -115,7 +114,7 @@ export function MaterialManagement() {
     
     try {
       if (type === 'print') {
-        window.print();
+        printElement();
         setIsExporting(false);
         toast.dismiss(loadingToast);
         return;
@@ -124,44 +123,9 @@ export function MaterialManagement() {
       const fileName = `MaterialList_${list.title.replace(/\s+/g, "_")}`;
 
       if (type === 'image') {
-        const dataUrl = await domtoimage.toPng(exportRef.current, {
-          quality: 1,
-          bgcolor: "#ffffff",
-          width: exportRef.current.offsetWidth * 2,
-          height: exportRef.current.offsetHeight * 2,
-          style: {
-            transform: 'scale(2)',
-            transformOrigin: 'top left',
-            width: exportRef.current.offsetWidth + 'px',
-            height: exportRef.current.offsetHeight + 'px'
-          }
-        });
-        const link = document.createElement('a');
-        link.href = dataUrl;
-        link.download = `${fileName}.png`;
-        link.click();
+        await exportToImage(exportRef.current, fileName);
       } else if (type === 'pdf') {
-        const dataUrl = await domtoimage.toPng(exportRef.current, {
-          quality: 1,
-          bgcolor: "#ffffff",
-          width: exportRef.current.offsetWidth * 2,
-          height: exportRef.current.offsetHeight * 2,
-          style: {
-            transform: 'scale(2)',
-            transformOrigin: 'top left',
-            width: exportRef.current.offsetWidth + 'px',
-            height: exportRef.current.offsetHeight + 'px'
-          }
-        });
-        
-        const pdf = new jsPDF({
-          orientation: "portrait",
-          unit: "px",
-          format: [exportRef.current.offsetWidth, exportRef.current.offsetHeight],
-        });
-        
-        pdf.addImage(dataUrl, "PNG", 0, 0, exportRef.current.offsetWidth, exportRef.current.offsetHeight);
-        pdf.save(`${fileName}.pdf`);
+        await exportToPDF(exportRef.current, fileName);
       }
       
       setIsExporting(false);

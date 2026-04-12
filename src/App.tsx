@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { getBills, getSettings, getNotes, setupSync } from "./lib/storage";
 import { auth, onAuthStateChanged, User } from "./lib/firebase";
 import { App as CapApp } from "@capacitor/app";
+import { toast } from "sonner";
 
 export default function App() {
   const [activeBill, setActiveBill] = React.useState<Bill | null>(null);
@@ -38,6 +39,8 @@ export default function App() {
     contacts: 0
   });
   const [settings, setSettings] = React.useState(getSettings());
+
+  const [lastBackPress, setLastBackPress] = React.useState(0);
 
   const calculateStats = () => {
     const bills = getBills();
@@ -102,11 +105,43 @@ export default function App() {
     window.addEventListener('note-updated', handleStorageChange);
     
     // Handle Android Back Button
-    const backButtonListener = CapApp.addListener('backButton', ({ canGoBack }) => {
+    const backButtonListener = CapApp.addListener('backButton', () => {
+      if (activeBill) {
+        setActiveBill(null);
+        return;
+      }
+
+      if (isBillDialogOpen) {
+        setIsBillDialogOpen(false);
+        return;
+      }
+
+      if (isQuotationDialogOpen) {
+        setIsQuotationDialogOpen(false);
+        return;
+      }
+
+      // Check for custom events (Material/Team/Note forms)
+      const dialogs = document.querySelectorAll('[role="dialog"]');
+      if (dialogs.length > 0) {
+        // Try to find and click the close button or dispatch an event
+        const closeButtons = document.querySelectorAll('button[aria-label="Close"], .close-button');
+        if (closeButtons.length > 0) {
+          (closeButtons[closeButtons.length - 1] as HTMLElement).click();
+          return;
+        }
+      }
+
       if (view !== "dashboard") {
         setView("dashboard");
       } else {
-        CapApp.exitApp();
+        const now = Date.now();
+        if (now - lastBackPress < 2000) {
+          CapApp.exitApp();
+        } else {
+          setLastBackPress(now);
+          toast.info("Press back again to exit app");
+        }
       }
     });
     

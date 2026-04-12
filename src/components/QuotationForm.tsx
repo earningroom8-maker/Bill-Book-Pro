@@ -17,8 +17,7 @@ import { getNextQuotationNumber, saveQuotation, getSettings } from "../lib/stora
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 import { format } from "date-fns";
-import domtoimage from "dom-to-image-more";
-import jsPDF from "jspdf";
+import { exportToImage, exportToPDF, printElement } from "../lib/export";
 
 interface QuotationFormProps {
   onSave: (quotation: Bill) => void;
@@ -128,7 +127,7 @@ export function QuotationForm({ onSave }: QuotationFormProps) {
     
     try {
       if (type === 'print') {
-        window.print();
+        printElement();
         setIsExporting(false);
         toast.dismiss(loadingToast);
         return;
@@ -139,45 +138,10 @@ export function QuotationForm({ onSave }: QuotationFormProps) {
       const fileName = `Quotation_${quotationNumber}_${customer.name.replace(/\s+/g, "_")}`;
 
       if (type === 'image') {
-        const dataUrl = await domtoimage.toPng(billRef.current, {
-          quality: 1,
-          bgcolor: "#ffffff",
-          width: billRef.current.offsetWidth * 2,
-          height: billRef.current.offsetHeight * 2,
-          style: {
-            transform: 'scale(2)',
-            transformOrigin: 'top left',
-            width: billRef.current.offsetWidth + 'px',
-            height: billRef.current.offsetHeight + 'px'
-          }
-        });
-        const link = document.createElement('a');
-        link.href = dataUrl;
-        link.download = `${fileName}.png`;
-        link.click();
+        await exportToImage(billRef.current, fileName);
         toast.success("Image saved successfully!");
       } else if (type === 'pdf') {
-        const dataUrl = await domtoimage.toPng(billRef.current, {
-          quality: 1,
-          bgcolor: "#ffffff",
-          width: billRef.current.offsetWidth * 2,
-          height: billRef.current.offsetHeight * 2,
-          style: {
-            transform: 'scale(2)',
-            transformOrigin: 'top left',
-            width: billRef.current.offsetWidth + 'px',
-            height: billRef.current.offsetHeight + 'px'
-          }
-        });
-        
-        const pdf = new jsPDF({
-          orientation: "portrait",
-          unit: "px",
-          format: [billRef.current.offsetWidth, billRef.current.offsetHeight],
-        });
-        
-        pdf.addImage(dataUrl, "PNG", 0, 0, billRef.current.offsetWidth, billRef.current.offsetHeight);
-        pdf.save(`${fileName}.pdf`);
+        await exportToPDF(billRef.current, fileName);
         toast.success("PDF saved successfully!");
       }
       

@@ -55,6 +55,8 @@ export function Auth({ onLogin }: AuthProps) {
         message = "Sign-in request was cancelled.";
       } else if (error.code === 'auth/popup-blocked') {
         message = "Sign-in popup was blocked by your browser.";
+      } else if (error.code === 'auth/unauthorized-domain') {
+        message = "This domain is not authorized in Firebase Console. Please ensure you have added the current URL to 'Authorized domains' in Firebase Authentication settings and wait 5-10 minutes for it to propagate.";
       } else if (error.message) {
         message = error.message;
       }

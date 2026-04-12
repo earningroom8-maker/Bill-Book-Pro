@@ -1,21 +1,18 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, User, browserPopupRedirectResolver, initializeAuth, browserLocalPersistence } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, User } from 'firebase/auth';
 import { initializeFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, query, where, onSnapshot, getDocFromServer } from 'firebase/firestore';
 import { firebaseConfig } from './firebase-config';
 
 // Initialize Firebase SDK
 const app = initializeApp(firebaseConfig);
 
-// Use initializeFirestore with long polling enabled to handle connectivity issues in some environments
+// Use initializeFirestore with long polling enabled
 export const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
 }, firebaseConfig.firestoreDatabaseId);
 
-// Initialize Auth with specific persistence and resolver for better compatibility
-export const auth = initializeAuth(app, {
-  persistence: browserLocalPersistence,
-  popupRedirectResolver: browserPopupRedirectResolver,
-});
+// Standard Auth initialization
+export const auth = getAuth(app);
 
 export const googleProvider = new GoogleAuthProvider();
 // Add scopes if needed

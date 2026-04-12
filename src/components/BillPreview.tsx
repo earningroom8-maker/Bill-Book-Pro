@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Bill, AppSettings } from "../types";
 import { format } from "date-fns";
-import domtoimage from "dom-to-image-more";
-import jsPDF from "jspdf";
+import { exportToImage, exportToPDF, printElement } from "../lib/export";
 import { toast } from "sonner";
 import { getSettings } from "../lib/storage";
 import { Filesystem, Directory } from "@capacitor/filesystem";
@@ -48,48 +47,8 @@ export function BillPreview({ bill, onClose }: BillPreviewProps) {
       // Wait for state update
       await new Promise(resolve => setTimeout(resolve, 200));
 
-      const width = billRef.current.offsetWidth;
-      const height = billRef.current.offsetHeight;
-
-      const dataUrl = await domtoimage.toPng(billRef.current, {
-        quality: 1,
-        bgcolor: "#ffffff",
-        width: width * 2,
-        height: height * 2,
-        style: {
-          transform: 'scale(2)',
-          transformOrigin: 'top left',
-          width: width + 'px',
-          height: height + 'px'
-        }
-      });
-      
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "px",
-        format: [width, height],
-      });
-      
-      pdf.addImage(dataUrl, "PNG", 0, 0, width, height);
-      const fileName = `Bill_${bill.billNumber}_${bill.customer.name.replace(/\s+/g, "_")}.pdf`;
-
-      if (Capacitor.isNativePlatform()) {
-        const pdfBase64 = pdf.output('datauristring').split(',')[1];
-        const savedFile = await Filesystem.writeFile({
-          path: fileName,
-          data: pdfBase64,
-          directory: Directory.Cache
-        });
-
-        await Share.share({
-          title: 'Share Bill',
-          text: `Bill ${bill.billNumber} for ${bill.customer.name}`,
-          url: savedFile.uri,
-          dialogTitle: 'Share Bill'
-        });
-      } else {
-        pdf.save(fileName);
-      }
+      const fileName = `Bill_${bill.billNumber}_${bill.customer.name.replace(/\s+/g, "_")}`;
+      await exportToPDF(billRef.current, fileName);
       
       setIsExporting(false);
       toast.dismiss(loadingToast);
@@ -111,42 +70,8 @@ export function BillPreview({ bill, onClose }: BillPreviewProps) {
     try {
       await new Promise(resolve => setTimeout(resolve, 200));
       
-      const width = billRef.current.offsetWidth;
-      const height = billRef.current.offsetHeight;
-
-      const dataUrl = await domtoimage.toPng(billRef.current, {
-        quality: 1,
-        bgcolor: "#ffffff",
-        width: width * 2,
-        height: height * 2,
-        style: {
-          transform: 'scale(2)',
-          transformOrigin: 'top left',
-          width: width + 'px',
-          height: height + 'px'
-        }
-      });
-
-      const fileName = `Bill_${bill.billNumber}.png`;
-
-      if (Capacitor.isNativePlatform()) {
-        const base64Data = dataUrl.split(',')[1];
-        const savedFile = await Filesystem.writeFile({
-          path: fileName,
-          data: base64Data,
-          directory: Directory.Cache
-        });
-
-        await Share.share({
-          title: 'Share Bill Image',
-          url: savedFile.uri
-        });
-      } else {
-        const link = document.createElement('a');
-        link.download = fileName;
-        link.href = dataUrl;
-        link.click();
-      }
+      const fileName = `Bill_${bill.billNumber}`;
+      await exportToImage(billRef.current, fileName);
 
       setIsExporting(false);
       toast.dismiss(loadingToast);
@@ -171,7 +96,7 @@ export function BillPreview({ bill, onClose }: BillPreviewProps) {
             <Button onClick={handleShareImage} variant="outline" size="sm" className="gap-2 dark:border-slate-700 dark:text-white">
               <Share2 className="w-4 h-4" /> Share
             </Button>
-            <Button onClick={() => window.print()} variant="outline" size="sm" className="gap-2 hidden sm:flex dark:border-slate-700 dark:text-white">
+            <Button onClick={() => printElement()} variant="outline" size="sm" className="gap-2 hidden sm:flex dark:border-slate-700 dark:text-white">
               <Printer className="w-4 h-4" /> Print
             </Button>
             <Button onClick={onClose} variant="ghost" size="icon" className="text-slate-500 dark:text-slate-400">

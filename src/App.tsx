@@ -41,6 +41,21 @@ export default function App() {
   const [settings, setSettings] = React.useState(getSettings());
 
   const [lastBackPress, setLastBackPress] = React.useState(0);
+  
+  // Refs for back button listener to avoid stale closures
+  const viewRef = React.useRef(view);
+  const activeBillRef = React.useRef(activeBill);
+  const isBillDialogOpenRef = React.useRef(isBillDialogOpen);
+  const isQuotationDialogOpenRef = React.useRef(isQuotationDialogOpen);
+  const lastBackPressRef = React.useRef(lastBackPress);
+
+  React.useEffect(() => {
+    viewRef.current = view;
+    activeBillRef.current = activeBill;
+    isBillDialogOpenRef.current = isBillDialogOpen;
+    isQuotationDialogOpenRef.current = isQuotationDialogOpen;
+    lastBackPressRef.current = lastBackPress;
+  }, [view, activeBill, isBillDialogOpen, isQuotationDialogOpen, lastBackPress]);
 
   const calculateStats = () => {
     const bills = getBills();
@@ -106,17 +121,17 @@ export default function App() {
     
     // Handle Android Back Button
     const backButtonListener = CapApp.addListener('backButton', () => {
-      if (activeBill) {
+      if (activeBillRef.current) {
         setActiveBill(null);
         return;
       }
 
-      if (isBillDialogOpen) {
+      if (isBillDialogOpenRef.current) {
         setIsBillDialogOpen(false);
         return;
       }
 
-      if (isQuotationDialogOpen) {
+      if (isQuotationDialogOpenRef.current) {
         setIsQuotationDialogOpen(false);
         return;
       }
@@ -132,11 +147,11 @@ export default function App() {
         }
       }
 
-      if (view !== "dashboard") {
+      if (viewRef.current !== "dashboard") {
         setView("dashboard");
       } else {
         const now = Date.now();
-        if (now - lastBackPress < 2000) {
+        if (now - lastBackPressRef.current < 2000) {
           CapApp.exitApp();
         } else {
           setLastBackPress(now);

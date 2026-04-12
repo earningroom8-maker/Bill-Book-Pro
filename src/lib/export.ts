@@ -1,24 +1,19 @@
-import domtoimage from "dom-to-image-more";
+import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { Filesystem, Directory } from "@capacitor/filesystem";
 import { Share } from "@capacitor/share";
 import { Capacitor } from "@capacitor/core";
-import { toast } from "sonner";
 
 export async function exportToImage(element: HTMLElement, fileName: string) {
   try {
-    const dataUrl = await domtoimage.toPng(element, {
-      quality: 1,
-      bgcolor: "#ffffff",
-      width: element.offsetWidth * 2,
-      height: element.offsetHeight * 2,
-      style: {
-        transform: 'scale(2)',
-        transformOrigin: 'top left',
-        width: element.offsetWidth + 'px',
-        height: element.offsetHeight + 'px'
-      }
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      backgroundColor: "#ffffff",
     });
+
+    const dataUrl = canvas.toDataURL("image/png");
 
     if (Capacitor.isNativePlatform()) {
       const base64Data = dataUrl.split(',')[1];
@@ -51,26 +46,25 @@ export async function exportToImage(element: HTMLElement, fileName: string) {
 
 export async function exportToPDF(element: HTMLElement, fileName: string) {
   try {
-    const dataUrl = await domtoimage.toPng(element, {
-      quality: 1,
-      bgcolor: "#ffffff",
-      width: element.offsetWidth * 2,
-      height: element.offsetHeight * 2,
-      style: {
-        transform: 'scale(2)',
-        transformOrigin: 'top left',
-        width: element.offsetWidth + 'px',
-        height: element.offsetHeight + 'px'
-      }
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      backgroundColor: "#ffffff",
     });
 
+    const dataUrl = canvas.toDataURL("image/png");
+    
+    const imgWidth = element.offsetWidth;
+    const imgHeight = element.offsetHeight;
+    
     const pdf = new jsPDF({
-      orientation: "portrait",
+      orientation: imgWidth > imgHeight ? "landscape" : "portrait",
       unit: "px",
-      format: [element.offsetWidth, element.offsetHeight],
+      format: [imgWidth, imgHeight],
     });
 
-    pdf.addImage(dataUrl, "PNG", 0, 0, element.offsetWidth, element.offsetHeight);
+    pdf.addImage(dataUrl, "PNG", 0, 0, imgWidth, imgHeight);
     
     if (Capacitor.isNativePlatform()) {
       const pdfBase64 = pdf.output('datauristring').split(',')[1];
@@ -99,5 +93,12 @@ export async function exportToPDF(element: HTMLElement, fileName: string) {
 }
 
 export function printElement() {
-  window.print();
+  if (Capacitor.isNativePlatform()) {
+    // On native, window.print() often doesn't work.
+    // We suggest using the PDF export and sharing to print.
+    const msg = "To print on mobile, please use the 'Save as PDF' option and then print the shared file.";
+    alert(msg);
+  } else {
+    window.print();
+  }
 }

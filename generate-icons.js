@@ -47,6 +47,10 @@ async function generateIcons() {
     await sharp(sourceImage)
       .resize(size, size)
       .toFile(path.join(targetDir, 'ic_launcher_round.png'));
+
+    await sharp(sourceImage)
+      .resize(size, size)
+      .toFile(path.join(targetDir, 'ic_launcher_foreground.png'));
       
     console.log(`Generated icons for ${folder} (${size}x${size})`);
   }

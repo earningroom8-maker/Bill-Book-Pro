@@ -414,6 +414,12 @@ export function Auth({ onLogin }: AuthProps) {
                 Google
               </Button>
 
+              <div className="text-center px-4">
+                <p className="text-[10px] text-slate-400 font-medium leading-relaxed">
+                  Note: If Google Login fails in APK, please ensure your SHA-1 fingerprint is added to Firebase Console.
+                </p>
+              </div>
+
               <Button 
                 type="button" 
                 variant="outline" 

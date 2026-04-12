@@ -364,6 +364,56 @@ export default function App() {
                     </div>
                   </div>
                 </div>
+
+                {/* Recent Activity */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between px-2">
+                    <h3 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">Recent Activity</h3>
+                    <Button variant="ghost" size="sm" onClick={() => setView("bill")} className="text-blue-600 font-bold hover:bg-blue-50 dark:hover:bg-blue-900/20">
+                      View All
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-1 gap-3">
+                    {getBills().slice(0, 3).length > 0 ? (
+                      getBills().slice(0, 3).map((bill) => (
+                        <div 
+                          key={bill.id} 
+                          onClick={() => setActiveBill(bill)}
+                          className="bg-white dark:bg-slate-900/80 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-800 flex items-center justify-between hover:border-blue-200 dark:hover:border-blue-900 transition-all cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-center text-slate-400 group-hover:text-blue-600 transition-colors">
+                              <Receipt className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <p className="font-black text-slate-900 dark:text-white leading-none mb-1">{bill.customer.name}</p>
+                              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">#{bill.billNumber} • {format(new Date(bill.date), "dd MMM")}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-black text-slate-900 dark:text-white">
+                              {settings.currency === 'PKR' ? '₨' : settings.currency === 'INR' ? '₹' : '$'}
+                              {bill.total.toLocaleString()}
+                            </p>
+                            <span className={cn(
+                              "text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full",
+                              bill.status === 'paid' ? "bg-green-100 text-green-600 dark:bg-green-900/20" : "bg-amber-100 text-amber-600 dark:bg-amber-900/20"
+                            )}>
+                              {bill.status}
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="bg-white dark:bg-slate-900/80 p-8 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800 text-center space-y-2">
+                        <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto text-slate-300">
+                          <History className="w-6 h-6" />
+                        </div>
+                        <p className="text-slate-400 font-bold text-sm">No recent activity yet</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </motion.div>
             ) : view === "bill" ? (
               <motion.div

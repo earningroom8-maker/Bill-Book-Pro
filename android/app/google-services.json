@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "883423728841",
+    "project_id": "gen-lang-client-0791621593",
+    "storage_bucket": "gen-lang-client-0791621593.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883423728841:android:2f9f49da982f3ed36f6918",
+        "android_client_info": {
+          "package_name": "com.billbook.pro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "883423728841-cob5jijqsh7sn460eq74ga7ues3nmall.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkQ2DOR_Y3hEdkoo5Upp8rThYmLyecwdk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "883423728841-cob5jijqsh7sn460eq74ga7ues3nmall.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

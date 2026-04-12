@@ -345,54 +345,54 @@ export function MaterialManagement() {
       {/* Export Template (Hidden) */}
       <div className="fixed left-[-9999px] top-0">
         <div ref={exportRef} className="w-[800px] bg-white dark:bg-slate-900 p-12 text-slate-900 dark:text-white font-sans">
-          <div className="text-center space-y-2 pb-8 border-b border-slate-100 dark:border-slate-800">
-            <h1 className="text-4xl font-black tracking-wider text-emerald-600 dark:text-emerald-500 uppercase">
+          <div className="text-center space-y-2 pb-8 border-b-2 border-slate-100 dark:border-slate-800">
+            <h1 className="text-4xl font-black tracking-tighter text-emerald-600 dark:text-emerald-500 uppercase">
               {settings.companyName || "F.Z ELECTRIC SERVICE'S"}
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 font-medium">{settings.address || "Gujranwala Pakistan"}</p>
-            <div className="flex items-center justify-center gap-6 text-slate-900 dark:text-white font-bold tracking-widest text-lg">
+            <p className="text-slate-500 dark:text-slate-400 font-semibold text-base tracking-tight">{settings.address || "Gujranwala Pakistan"}</p>
+            <div className="flex items-center justify-center gap-8 text-slate-900 dark:text-white font-bold tracking-widest text-xl">
               <a href={`tel:${settings.phone || "03246043916"}`} className="hover:text-emerald-600 transition-colors">
                 {settings.phone || "03246043916"}
               </a>
             </div>
             <div className="pt-4">
-              <span className="bg-emerald-600 text-white px-6 py-1 rounded-full text-xs font-black tracking-widest uppercase">Material List</span>
+              <span className="bg-emerald-600 text-white px-8 py-1.5 rounded-full text-xs font-black tracking-[0.2em] uppercase shadow-sm">Material List</span>
             </div>
           </div>
 
-          <div className="py-8 flex justify-between items-end border-b border-slate-100 dark:border-slate-800">
-            <div className="space-y-4">
+          <div className="py-10 flex justify-between items-end border-b-2 border-slate-100 dark:border-slate-800">
+            <div className="space-y-6">
               {activeList?.customerName && (
                 <div className="space-y-1">
-                  <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">CUSTOMER NAME</h3>
-                  <p className="text-xl font-bold text-slate-900 dark:text-white">{activeList.customerName}</p>
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">CUSTOMER NAME</h3>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{activeList.customerName}</p>
                 </div>
               )}
               <div className="space-y-1">
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">PROJECT / TITLE</h3>
-                <p className="text-3xl font-black text-slate-900 dark:text-white">{activeList?.title}</p>
+                <h3 className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">PROJECT / TITLE</h3>
+                <p className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{activeList?.title}</p>
               </div>
             </div>
             <div className="text-right space-y-1">
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">DATE</h3>
-              <p className="text-xl font-bold text-slate-900 dark:text-white">{activeList && format(new Date(activeList.date), "dd MMM yyyy")}</p>
+              <h3 className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">DATE</h3>
+              <p className="text-xl font-bold text-slate-900 dark:text-white">{activeList && format(new Date(activeList.date), "dd MMMM yyyy")}</p>
             </div>
           </div>
 
-          <table className="w-full mt-8">
+          <table className="w-full mt-10">
             <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
-                <th className="py-4 px-8 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">MATERIAL NAME</th>
-                <th className="py-4 px-4 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">QTY</th>
-                <th className="py-4 px-4 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">UNIT</th>
+              <tr className="bg-slate-50/80 dark:bg-slate-800/80 border-b-2 border-slate-100 dark:border-slate-800">
+                <th className="py-4 px-8 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">MATERIAL DESCRIPTION</th>
+                <th className="py-4 px-4 text-center text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">QTY</th>
+                <th className="py-4 px-4 text-center text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">UNIT</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+            <tbody className="divide-y-2 divide-slate-50 dark:divide-slate-800">
               {activeList?.items.map((item) => (
-                <tr key={item.id}>
-                  <td className="py-5 px-8 font-bold text-slate-900 dark:text-white">{item.name}</td>
-                  <td className="py-5 px-4 text-center font-medium text-slate-600 dark:text-slate-400">{item.quantity}</td>
-                  <td className="py-5 px-4 text-center font-medium text-slate-500 dark:text-slate-400 text-xs uppercase">{item.unit}</td>
+                <tr key={item.id} className="hover:bg-slate-50/30 transition-colors">
+                  <td className="py-6 px-8 font-bold text-slate-900 dark:text-white text-lg leading-tight">{item.name}</td>
+                  <td className="py-6 px-4 text-center font-black text-slate-900 dark:text-white text-lg">{item.quantity}</td>
+                  <td className="py-6 px-4 text-center font-bold text-slate-500 dark:text-slate-400 text-sm uppercase tracking-widest">{item.unit}</td>
                 </tr>
               ))}
             </tbody>

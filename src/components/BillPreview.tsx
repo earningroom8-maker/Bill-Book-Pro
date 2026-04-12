@@ -119,43 +119,45 @@ export function BillPreview({ bill, onClose }: BillPreviewProps) {
                 transform: 'scale(var(--preview-scale, 1))'
               }}
             >
-              <div className="text-center space-y-1 pb-4 border-b border-slate-100 dark:border-slate-800">
-                <h1 className={cn("text-2xl font-black tracking-wider uppercase", themeColor)}>
+              <div className="text-center space-y-2 pb-6 border-b-2 border-slate-100 dark:border-slate-800">
+                <h1 className={cn("text-3xl font-black tracking-tighter uppercase", themeColor)}>
                   {bill.companyName || settings.companyName || "F.Z ELECTRIC SERVICE'S"}
                 </h1>
                 {settings.ownerName && (
-                  <p className="text-slate-700 dark:text-slate-300 font-bold text-sm">{settings.ownerName}</p>
+                  <p className="text-slate-800 dark:text-slate-200 font-bold text-base tracking-tight">{settings.ownerName}</p>
                 )}
-                <p className="text-slate-500 dark:text-slate-400 font-medium text-xs">{settings.address || "Gujranwala Pakistan"}</p>
-                <div className="flex items-center justify-center gap-4 text-slate-900 dark:text-white font-bold tracking-widest text-sm">
+                <p className="text-slate-500 dark:text-slate-400 font-semibold text-xs tracking-wide">{settings.address || "Gujranwala Pakistan"}</p>
+                <div className="flex items-center justify-center gap-6 text-slate-900 dark:text-white font-bold tracking-widest text-sm">
                   <a href={`tel:${settings.phone || "03246043916"}`} className="hover:text-blue-600 transition-colors">
                     {settings.phone || "03246043916"}
                   </a>
                 </div>
-                <div className="pt-1">
-                  <span className={cn("text-white px-4 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase", bgColor)}>
-                    {isQuotation ? "Quotation" : "Bill"}
+                <div className="pt-2">
+                  <span className={cn("text-white px-6 py-1 rounded-full text-[11px] font-black tracking-[0.2em] uppercase shadow-sm", bgColor)}>
+                    {isQuotation ? "Quotation" : "Invoice"}
                   </span>
                 </div>
               </div>
 
               {/* Customer & Bill Info */}
-              <div className="grid grid-cols-2 border-b border-slate-100 dark:border-slate-800">
-                <div className="p-4 border-r border-slate-100 dark:border-slate-800 space-y-2">
-                  <h3 className="text-[9px] font-black uppercase tracking-widest text-slate-400">BILLED TO</h3>
-                  <p className="text-lg font-black text-slate-900 dark:text-white">{bill.customer.name}</p>
-                  {bill.customer.mobile && (
-                    <p className="text-xs font-bold text-blue-600">{bill.customer.mobile}</p>
-                  )}
-                </div>
-                <div className="p-4 space-y-4">
-                  <div className="space-y-0">
-                    <h3 className="text-[9px] font-black uppercase tracking-widest text-slate-400">{isQuotation ? "QUOTATION NO." : "BILL NO."}</h3>
-                    <p className={cn("text-xl font-black", themeColor)}>{bill.billNumber}</p>
+              <div className="grid grid-cols-2 border-b-2 border-slate-100 dark:border-slate-800">
+                <div className="p-6 border-r-2 border-slate-100 dark:border-slate-800 space-y-3">
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">BILLED TO</h3>
+                  <div className="space-y-1">
+                    <p className="text-xl font-black text-slate-900 dark:text-white leading-tight">{bill.customer.name}</p>
+                    {bill.customer.mobile && (
+                      <p className="text-sm font-bold text-blue-600 tracking-wide">{bill.customer.mobile}</p>
+                    )}
                   </div>
-                  <div className="space-y-0">
-                    <h3 className="text-[9px] font-black uppercase tracking-widest text-slate-400">Date</h3>
-                    <p className="text-sm font-bold text-slate-900 dark:text-white">{format(new Date(bill.date), "dd MMM yyyy")}</p>
+                </div>
+                <div className="p-6 space-y-5">
+                  <div className="space-y-1">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">{isQuotation ? "QUOTATION NO." : "INVOICE NO."}</h3>
+                    <p className={cn("text-2xl font-black tracking-tighter", themeColor)}>{bill.billNumber}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">DATE</h3>
+                    <p className="text-sm font-bold text-slate-900 dark:text-white">{format(new Date(bill.date), "dd MMMM yyyy")}</p>
                   </div>
                 </div>
               </div>
@@ -163,23 +165,23 @@ export function BillPreview({ bill, onClose }: BillPreviewProps) {
               {/* Items Table */}
               <table className="w-full">
                 <thead>
-                  <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
-                    <th className="py-2 px-4 text-left text-[9px] font-black uppercase tracking-widest text-slate-400">ITEM</th>
-                    <th className="py-2 px-2 text-center text-[9px] font-black uppercase tracking-widest text-slate-400">QTY</th>
-                    <th className="py-2 px-2 text-center text-[9px] font-black uppercase tracking-widest text-slate-400">RATE</th>
-                    <th className="py-2 px-4 text-right text-[9px] font-black uppercase tracking-widest text-slate-400">TOTAL</th>
+                  <tr className="bg-slate-50/80 dark:bg-slate-800/80 border-b-2 border-slate-100 dark:border-slate-800">
+                    <th className="py-3 px-4 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">ITEM DESCRIPTION</th>
+                    <th className="py-3 px-2 text-center text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">QTY</th>
+                    <th className="py-3 px-2 text-center text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">RATE</th>
+                    <th className="py-3 px-4 text-right text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">TOTAL</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+                <tbody className="divide-y-2 divide-slate-50 dark:divide-slate-800">
                   {bill.items.map((item) => (
-                    <tr key={item.id}>
-                      <td className="py-3 px-4 font-bold text-slate-900 dark:text-white text-sm">{item.name}</td>
-                      <td className="py-3 px-2 text-center font-medium text-slate-600 dark:text-slate-400 text-sm">{item.quantity}</td>
-                      <td className="py-3 px-2 text-center font-medium text-slate-600 dark:text-slate-400 text-sm">
+                    <tr key={item.id} className="hover:bg-slate-50/30 transition-colors">
+                      <td className="py-4 px-4 font-bold text-slate-900 dark:text-white text-sm leading-tight">{item.name}</td>
+                      <td className="py-4 px-2 text-center font-bold text-slate-600 dark:text-slate-400 text-sm">{item.quantity}</td>
+                      <td className="py-4 px-2 text-center font-bold text-slate-600 dark:text-slate-400 text-sm">
                         {getCurrencySymbol(settings.currency)}
                         {item.price.toLocaleString()}
                       </td>
-                      <td className="py-3 px-4 text-right font-black text-slate-900 dark:text-white text-sm">
+                      <td className="py-4 px-4 text-right font-black text-slate-900 dark:text-white text-sm">
                         {getCurrencySymbol(settings.currency)}
                         {item.total.toLocaleString()}
                       </td>
@@ -189,10 +191,10 @@ export function BillPreview({ bill, onClose }: BillPreviewProps) {
               </table>
 
               {/* Summary Section */}
-              <div className="p-6 space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-lg font-black text-slate-900 dark:text-white">Total</span>
-                  <span className={cn("text-xl font-black", themeColor)}>
+              <div className="p-8 space-y-5 bg-slate-50/30 dark:bg-slate-800/10">
+                <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
+                  <span className="text-base font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Subtotal</span>
+                  <span className="text-lg font-black text-slate-900 dark:text-white">
                     {getCurrencySymbol(settings.currency)}
                     {bill.total.toLocaleString()}
                   </span>
@@ -200,17 +202,17 @@ export function BillPreview({ bill, onClose }: BillPreviewProps) {
                 
                 {!isQuotation && (
                   <>
-                    <div className="flex justify-between items-center">
-                      <span className="text-base font-bold text-green-600">Received</span>
+                    <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
+                      <span className="text-base font-bold text-green-600 uppercase tracking-widest">Amount Received</span>
                       <span className="text-lg font-black text-green-600">
                         {getCurrencySymbol(settings.currency)}
                         {bill.receivedAmount.toLocaleString()}
                       </span>
                     </div>
 
-                    <div className={cn("p-4 rounded-2xl flex justify-between items-center border", isQuotation ? "bg-purple-50 dark:bg-purple-900/10 border-purple-100 dark:border-purple-900/30" : "bg-blue-50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/30")}>
-                      <span className={cn("text-base font-black", isQuotation ? "text-purple-800 dark:text-purple-300" : "text-blue-800 dark:text-blue-300")}>Balance Due</span>
-                      <span className={cn("text-lg font-black", themeColor)}>
+                    <div className={cn("p-5 rounded-3xl flex justify-between items-center border-2 shadow-sm", isQuotation ? "bg-purple-50 dark:bg-purple-900/10 border-purple-100 dark:border-purple-900/30" : "bg-blue-50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/30")}>
+                      <span className={cn("text-lg font-black uppercase tracking-widest", isQuotation ? "text-purple-800 dark:text-purple-300" : "text-blue-800 dark:text-blue-300")}>Balance Due</span>
+                      <span className={cn("text-2xl font-black", themeColor)}>
                         {getCurrencySymbol(settings.currency)}
                         {bill.balanceDue.toLocaleString()}
                       </span>

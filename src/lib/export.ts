@@ -7,7 +7,7 @@ import { Capacitor } from "@capacitor/core";
 export async function exportToImage(element: HTMLElement, fileName: string) {
   try {
     const canvas = await html2canvas(element, {
-      scale: 2,
+      scale: 1.5,
       useCORS: true,
       logging: false,
       backgroundColor: "#ffffff",
@@ -47,7 +47,7 @@ export async function exportToImage(element: HTMLElement, fileName: string) {
 export async function exportToPDF(element: HTMLElement, fileName: string) {
   try {
     const canvas = await html2canvas(element, {
-      scale: 2,
+      scale: 1.5,
       useCORS: true,
       logging: false,
       backgroundColor: "#ffffff",

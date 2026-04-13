@@ -25,6 +25,7 @@ import { getBills, getSettings, getNotes, setupSync } from "./lib/storage";
 import { auth, onAuthStateChanged, User } from "./lib/firebase";
 import { App as CapApp } from "@capacitor/app";
 import { toast } from "sonner";
+import { format } from "date-fns";
 
 export default function App() {
   const [activeBill, setActiveBill] = React.useState<Bill | null>(null);

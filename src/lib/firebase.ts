@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, User } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 import { initializeFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, query, where, onSnapshot, getDocFromServer } from 'firebase/firestore';
 import { firebaseConfig } from './firebase-config';
 
@@ -13,15 +13,6 @@ export const db = initializeFirestore(app, {
 
 // Standard Auth initialization
 export const auth = getAuth(app);
-
-export const googleProvider = new GoogleAuthProvider();
-// Add scopes if needed
-googleProvider.addScope('profile');
-googleProvider.addScope('email');
-// Force select account to help with some invalid action errors
-googleProvider.setCustomParameters({
-  prompt: 'select_account'
-});
 
 export enum OperationType {
   CREATE = 'create',
@@ -85,7 +76,6 @@ export {
   query, 
   where, 
   onSnapshot,
-  signInWithPopup,
   onAuthStateChanged
 };
 export type { User };

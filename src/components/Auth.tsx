@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import { saveSettings, getSettings } from "../lib/storage";
-import { auth, db, googleProvider, signInWithPopup } from "../lib/firebase";
+import { auth, db } from "../lib/firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from "firebase/auth";
 
 interface AuthProps {
@@ -38,32 +38,6 @@ export function Auth({ onLogin }: AuthProps) {
     localStorage.setItem("billbook_offline_mode", "true");
     onLogin(offlineUser);
     toast.success("Using app in Offline Mode. Data will be saved locally only.");
-  };
-
-  const handleGoogleSignIn = async () => {
-    try {
-      setLoading(true);
-      const result = await signInWithPopup(auth, googleProvider);
-      onLogin(result.user);
-      toast.success(`Welcome, ${result.user.displayName}!`);
-    } catch (error: any) {
-      console.error(error);
-      let message = "Google Sign-In failed";
-      if (error.code === 'auth/popup-closed-by-user') {
-        message = "Sign-in popup was closed. Please try again and keep the window open. If it still fails, try opening the app in a new tab.";
-      } else if (error.code === 'auth/cancelled-popup-request') {
-        message = "Sign-in request was cancelled.";
-      } else if (error.code === 'auth/popup-blocked') {
-        message = "Sign-in popup was blocked by your browser.";
-      } else if (error.code === 'auth/unauthorized-domain') {
-        message = "This domain is not authorized in Firebase Console. Please ensure you have added the current URL to 'Authorized domains' in Firebase Authentication settings and wait 5-10 minutes for it to propagate.";
-      } else if (error.message) {
-        message = error.message;
-      }
-      toast.error(`${message} [${error.code || 'unknown'}]`);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleForgotPassword = async () => {
@@ -127,10 +101,10 @@ export function Auth({ onLogin }: AuthProps) {
       
       if (error.code === 'auth/invalid-credential') {
         message = isLogin 
-          ? "Invalid email or password. If you signed up with Google, please use the Google button. If you haven't created an account, click 'Sign Up'."
-          : "Could not create account. This email might already be linked to a Google account. Try signing in with Google or use a different email.";
+          ? "Invalid email or password. If you haven't created an account, click 'Sign Up'."
+          : "Could not create account. Try using a different email.";
       } else if (error.code === 'auth/operation-not-allowed') {
-        message = "Email/Password login is not enabled. Please use Google Sign-In or enable it in Firebase Console.";
+        message = "Email/Password login is not enabled. Please enable it in Firebase Console.";
       } else if (error.code === 'auth/email-already-in-use') {
         message = "This email is already registered. Please sign in instead.";
       } else if (error.code === 'auth/weak-password') {
@@ -394,38 +368,12 @@ export function Auth({ onLogin }: AuthProps) {
                 {!loading && <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />}
               </Button>
 
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-200 dark:border-slate-800"></div>
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white dark:bg-slate-900 px-2 text-slate-500 font-bold">Or continue with</span>
-                </div>
-              </div>
-
-              <Button 
-                type="button" 
-                variant="outline" 
-                disabled={loading}
-                onClick={handleGoogleSignIn}
-                className="w-full h-12 border-slate-200 dark:border-slate-800 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 dark:text-white"
-              >
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-5 h-5" alt="Google" />
-                Google
-              </Button>
-
-              <div className="text-center px-4">
-                <p className="text-[10px] text-slate-400 font-medium leading-relaxed">
-                  Note: If Google Login fails in APK, please ensure your SHA-1 fingerprint is added to Firebase Console.
-                </p>
-              </div>
-
               <Button 
                 type="button" 
                 variant="outline" 
                 disabled={loading}
                 onClick={handleOfflineUse}
-                className="w-full h-12 border-slate-200 dark:border-slate-800 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 dark:text-white"
+                className="w-full h-12 border-slate-200 dark:border-slate-800 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 dark:text-white mt-4"
               >
                 <WifiOff className="w-5 h-5 text-slate-500" />
                 Offline Use

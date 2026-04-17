@@ -6,7 +6,7 @@ import { getAnalytics } from "firebase/analytics";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyDzJoKZ2UbAzCjYl-XxACoL6vwCxRYKIiI",
   authDomain: "bill-book-pro-31b81.firebaseapp.com",
   databaseURL: "https://bill-book-pro-31b81-default-rtdb.firebaseio.com",

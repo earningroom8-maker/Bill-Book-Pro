@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-id 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     namespace = "com.billbook.pro"

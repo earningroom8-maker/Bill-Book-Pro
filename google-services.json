@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1073291650519",
+    "project_id": "bill-book-pro-31b81",
+    "storage_bucket": "bill-book-pro-31b81.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1073291650519:android:1eee68c13f245d875cd792",
+        "android_client_info": {
+          "package_name": "com.BillBook.pro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCk2S4Wa5DWTCFXeUkdCY9SE0uxyeP_mOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,4 @@
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyDzJoKZ2UbAzCjYl-XxACoL6vwCxRYKIiI",
   authDomain: "bill-book-pro-31b81.firebaseapp.com",
   projectId: "bill-book-pro-31b81",
